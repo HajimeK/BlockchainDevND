@@ -71,7 +71,7 @@ class Blockchain {
                 let previousBlock = self.chain[self.height];
                 block.previousBlockHash = previousBlock.hash;
                 // Verify signature
-                block.hash = SHA256(JSON.stringify(blockj)).toString();
+                block.hash = SHA256(JSON.stringify(block)).toString();
                 self.chain.push(block);
                 self.height = self.chain.length -1;
                 resolve(block);
@@ -96,7 +96,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            let message = '${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry'
+            let message = `${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry`
             resolve(message)
         });
     }
@@ -121,8 +121,10 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-            let time = parseInt(message.split(';')[1]);
+            let time = parseInt(message.split(':')[1]);
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
+            console.log(((time + (5*60*1000)) >= currentTime))
+            console.log(bitcoinMessage.verify(message, address, signature))
             if (((time + (5*60*1000)) >= currentTime) && bitcoinMessage.verify(message, address, signature)) {
                 let addedBlock = await self._addBlock(new BlockClass.Block({owner: address, star: star}));
                 resolve(addedBlock)
