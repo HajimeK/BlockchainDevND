@@ -52,7 +52,7 @@ class Block {
                 resolve(true);
             } else {
                 console.log('tampered ()')
-                reject(false);
+                resolve(false);
             };
             // Returning the Block is valid
 

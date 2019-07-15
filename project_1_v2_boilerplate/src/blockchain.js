@@ -207,7 +207,7 @@ class Blockchain {
                 promises.push(block.validate());
                 if(block.height > 0) {
                     let previousBlockHash = block.previousBlockHash;
-                    let blockHash = chain[chainIndex-1].hash;
+                    let blockHash = self.chain[chainIndex-1].hash;
                     if(blockHash != previousBlockHash){
                         errorLog.push(`Error - Block Heigh: ${block.height} - Previous Hash don't match.`);
                     }
