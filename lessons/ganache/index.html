@@ -14,61 +14,90 @@
 
 <body>
     <div>
-        <h1>Deploy a Remix Contract</h1>
+        <h1>Ethereum Secret Messenger</h1>
+        <hr>
+
+        <label for="message">This site writes a secret message to the Ethereum
+            blockchain!</label>
+        <input id="userInput" type="text">
+
+        <button id="setMessageButton">Set secret message</button>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 
     <script>
 
         // Connect a the web3 provider
         if (typeof web3 !== 'undefined') {
+            //console.log('undefined')
             web3 = new Web3(web3.currentProvider);
         } else {
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            //console.log('http://localhost:7545')
+            web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
         }
 
+        const contractorAddress = '0x295a6635a459042f51b86a01e93f0766dddecd11'
+
+        var RemixContract
         // Set a default account
-        web3.eth.defaultAccount = web3.eth.accounts[0];
+        web3.eth.getAccounts(function(error, accounts) {
+            if (error) return;
+            defaultAccount = accounts[0]
+            console.log(defaultAccount)
+            web3.eth.defaultAccount = defaultAccount
 
-        // Get the contract address
-        var RemixContract = new web3.eth.Contract(
-            [
-                {
-                    "constant": false,
-                    "inputs": [
-                        {
-                            "name": "x",
-                            "type": "string"
-                        }
-                    ],
-                    "name": "setMessage",
-                    "outputs": [],
-                    "payable": false,
-                    "stateMutability": "nonpayable",
-                    "type": "function"
-                },
-                {
-                    "constant": true,
-                    "inputs": [],
-                    "name": "getMessage",
-                    "outputs": [
-                        {
-                            "name": "",
-                            "type": "string"
-                        }
-                    ],
-                    "payable": false,
-                    "stateMutability": "view",
-                    "type": "function"
+            // Get the contract address
+            RemixContract = new web3.eth.Contract(
+                [
+                    {
+                        "constant": false,
+                        "inputs": [
+                            {
+                                "name": "x",
+                                "type": "string"
+                            }
+                        ],
+                        "name": "setMessage",
+                        "outputs": [],
+                        "payable": false,
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "constant": true,
+                        "inputs": [],
+                        "name": "getMessage",
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "string"
+                            }
+                        ],
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
+                    }
+                ],
+                contractorAddress
+            );
+        })
+
+        message = $("#userInput").val()
+        
+
+        $("#setMessageButton").click(function () {
+            //RemixContract.methods.setMessage(message).call().then(function(message) {
+            //    console.log(message)
+            //})
+            console.log(RemixContract)
+            RemixContract.methods.setMessage.call(
+                message, (error, result) => {
+                    console.log(result)
                 }
-            ],
-            '0xc99af22b36e9c1671b5d3cb6da9e1e7bf2e1024e'
-        );
-
-        // Get the contract abi
-        //var myMessage = RemixContract.at('0xc99af22b36e9c1671b5d3cb6da9e1e7bf2e1024e');
-
-        //console.log(myMessage);
-        console.log(RemixContract);
+            );
+            console.log(message)
+        });
 
     </script>
 </body>

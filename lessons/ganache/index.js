@@ -8,4 +8,4 @@ var sendingAddress = '0xfeB2a62eC0d6C3a2dbEd722c53B6B5049BC66313'
 // -- Step 3: Check the balances of each address
 web3.eth.getBalance(sendingAddress).then(console.log)
 
-web3.eth.getTransactionCount(sendingAddress).then(console.log)
+web3.eth.getTransactionCount(sendingAddress).then(console.logf)
