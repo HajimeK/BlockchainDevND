@@ -45,6 +45,14 @@ Your Project is to Modify the StarNotary version 2 contract code to achieve the 
 
     Write a function to Transfer a Star. The function should transfer a star from the address of the caller. The function should accept 2 arguments, the address to transfer the star to, and the token ID of the star.
 
+| Criteria | Meets Specifications |
+|---|---|
+|The smart contract tokens should have a name and a symbol. | Add a name and a symbol to the starNotary tokens. In the Starter Code (StarNotary.sol file) you implement: <br>// Implement Task 1 Add a name and symbol properties <br>// name: Is a short name to your token <br>// symbol: Is a short string like 'USD' -> 'American Dollar' |
+| Implement the function: lookUptokenIdToStarInfo in StarNotary.sol file // Implement Task 1 lookUptokenIdToStarInfo function lookUptokenIdToStarInfo (uint _tokenId) public view returns (string memory) {  } | Add a function lookUptokenIdToStarInfo, that looks up the stars using the Token ID, and then returns the name of the star. |
+| Implement the function: exchangeStars in StarNotary.sol file. // Implement Task 1 Exchange Stars function function exchangeStars(uint256 _tokenId1, uint256 _tokenId2) public {  }	 | Add a function called exchangeStars, so 2 users can exchange their star tokens. Do not worry about the price, just write code to exchange stars between users. |
+| Implement the function transferStar in StarNotary.sol file. function transferStar(address _to1, uint256 _tokenId) public {     }	| Write a function to Transfer a Star. The function should transfer a star from the address of the caller. The function should accept 2 arguments, the address to transfer the star to, and the token ID of the star.|
+
+
 ### Task 2
 
 Add supporting unit tests, to test the following:
