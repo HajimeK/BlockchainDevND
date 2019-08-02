@@ -5,6 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "ethereumjs-tx": "^2.1.0",
+    "openzeppelin-solidity": "^2.3.0",
+    "truffle-hdwallet-provider": "^1.0.15",
     "web3": "^1.2.0"
   },
   "devDependencies": {},
