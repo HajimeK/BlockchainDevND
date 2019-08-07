@@ -65,3 +65,5 @@ typings/
 
 #jupyter
 ./project_1_v2_boilerplates/test/.ipynb_checkpoints/
+
+.secret
