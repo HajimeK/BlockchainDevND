@@ -63,6 +63,22 @@ Consumer: The consumer can buy coffee palettes and track authenticity.
 :Distributor:
 :Retailer:
 :Consumer:
+
+Farmer -> (harvest coffee beans)
+Farmer -> (process coffee beans)
+Farmer -> (pack coffee palettes)
+Farmer -> (add coffee palettes)
+Farmer -> (shipt coffee palettes)
+Farmer -down-> (track authenticity)
+
+Distributor -> (buy coffee)
+Distributor -down-> (track authenticity)
+
+Retailer -> (receive coffee palettes)
+Retailer -down-> (track authenticity)
+
+Consumer -> (buy coffee palettes)
+Consumer -down-> (track authenticity)
 ```
 
 ### Requirement 3: Build out Base Contract
@@ -78,6 +94,65 @@ This smart contract must implement functions that track:
 - Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
 - Product notes
 - Product price
+
+```plantuml
+Class Palette {
+    {field}Product ID
+    {field}Product UPC
+    {field}Origination Information
+    {field}Origin Actor (e.g. Farmer ID, Farmer Name, )
+    {field}Misc. organization information (e.g. Farmer Information)
+    {field}Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
+    {field}Product notes
+    {field}Product price
+}
+
+
+Class SupplyChain {
+    {field} address owner
+    {field} uint upc : Define a variable called 'upc' for Universal Product Code (UPC)
+    {field} uint  sku;
+    {field} mapping (uint => Item) items;
+    {field} mapping (uint => string[]) itemsHistory;
+    {field} State
+}
+
+Abstract Class Owner {
+
+}
+
+Class Farmer {
+    {field} Farmer ID
+    {field} Farmer Name
+    {field} Farmer Information
+    {field} Farm's Longitude
+    {field} Farm's Latitude
+    {method} harvest()
+    {method} pack()
+    {method} process()
+    {method} add{}
+    {method} pack()
+    {methond} ship{}
+}
+
+Class Distributor {
+    {method} buyCoffee()
+}
+
+Class Retailer {
+    {method} receiveCoffeePalletes
+    {method}
+}
+
+Class Consumer {
+    {method} buyCoffeePalletes
+}
+
+Owner <|-- Farmer
+Owner <|-- Distributor
+Owner <|-- Retailer
+Owner <|-- Consumer
+```
 
 ### Requirement 4: Build out Core Contract
 Ownable.sol is the contract that controls ownership and transfer of ownership.
