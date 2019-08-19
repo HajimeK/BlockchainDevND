@@ -1,6 +1,6 @@
 # Ethereum Dapp for Tracking Items through Suuply Chain
 
-Learn lower level components of establishina a soud web service architecture using Blockchain.
+Learn lower level components of establishing a soud web service architecture using Blockchain.
 
 # Part 1 : Plan the project with write-ups
 
@@ -52,10 +52,12 @@ Build out these contracts so that each actor’s role in your supply chain is di
 
 *Example of 4 actors in a coffee supply chain are*:
 
-Farmer: The Farmer can harvest coffee beans, process coffee beans, pack coffee palettes, add coffee palettes, ship coffee palettes, and track authenticity.
-Distributor: The Distributor can buy coffee palettes and track authenticity.
-Retailer: The Retailer can receive coffee palettes and track authenticity.
-Consumer: The consumer can buy coffee palettes and track authenticity.
+| Actor | Capability |
+|----|----|
+| Farmer | The Farmer can harvest coffee beans, process coffee beans, pack coffee  palettes, add coffee palettes, ship coffee palettes, and track authenticity. |
+| Distributor | The Distributor can buy coffee palettes and track authenticity. |
+| Retailer | The Retailer can receive coffee palettes and track authenticity. |
+| Consumer | The consumer can buy coffee palettes and track authenticity. |
 
 
 ```plantuml
@@ -96,25 +98,54 @@ This smart contract must implement functions that track:
 - Product price
 
 ```plantuml
-Class Palette {
-    {field}Product ID
-    {field}Product UPC
-    {field}Origination Information
-    {field}Origin Actor (e.g. Farmer ID, Farmer Name, )
-    {field}Misc. organization information (e.g. Farmer Information)
-    {field}Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
-    {field}Product notes
-    {field}Product price
-}
-
 
 Class SupplyChain {
     {field} address owner
     {field} uint upc : Define a variable called 'upc' for Universal Product Code (UPC)
     {field} uint  sku;
-    {field} mapping (uint => Item) items;
-    {field} mapping (uint => string[]) itemsHistory;
+    {field} mapping  items;
+    {field} mapping  itemsHistory;
     {field} State
+    {method} constructor() public payablen
+    {method}kill() public
+    {method}harvestItem(uint _upc, address _originFarmerID, string _originFarmName, string _originFarmInformation, string  _originFarmLatitude, string  _originFarmLongitude, string  _productNotes) public
+    {method}processItem(uint _upc) public
+    {method}packItem(uint _upc) public
+    {method}sellItem(uint _upc, uint _price) public
+    {method}buyItem(uint _upc) public payable
+    {method}shipItem(uint _upc) public
+    {method}receiveItem(uint _upc) public
+    {method}purchaseItem(uint _upc) public
+    {method}fetchItemBufferOne(uint _upc) public view returns
+    {method}fetchItemBufferTwo(uint _upc) public view returns
+}
+
+Class Palette {
+    {field}Product ID
+    {field}Product UPC
+    {field}Origination Information
+    {field}Origin Actor 
+    {field}Misc. organization information
+    {field}Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
+    {field}Product notes
+    {field}Product price
+}
+
+Class Item <<struct>> {
+    uint    sku
+    uint    upc
+    address originFarmerID
+    string  originFarmName
+    string  originFarmInformation
+    string  originFarmLatitude
+    string  originFarmLongitude
+    uint    productID
+    string  productNotes
+    uint    productPrice
+    State   itemState
+    address distributorID
+    address retailerID
+    address consumerID
 }
 
 Abstract Class Owner {
@@ -148,10 +179,55 @@ Class Consumer {
     {method} buyCoffeePalletes
 }
 
+SupplyChain <-down- Owner
 Owner <|-- Farmer
 Owner <|-- Distributor
 Owner <|-- Retailer
 Owner <|-- Consumer
+
+Class Roles <<library>> {
+  {field} struct Role
+  {method} function add(Role storage role, address account) internal
+  {method} function remove(Role storage role, address account) internal
+  {method} function has(Role storage role, address account) internal view returns (bool)
+}
+
+Class FarmerRole {
+    {field} Roles.Role
+}
+Class DistributorRole {
+    {field} Roles.Role
+}
+Class RetailerRole {
+    {field} Roles.Role
+}
+Class ConsumerRole {
+    {field} Roles.Role
+}
+
+Role <-- FarmerRole
+Role <-- DistributorRole
+Role <-- RetailerRole
+Role <-- ConsumerRole
+
+FarmerRole o-- Farmer
+DistributorRole o-- Distributor
+RetailerRole o-- Retailer
+ConsumerRole o-- Consumer
+
+Class Ownable {
+    {field}  address private origOwner;
+    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
+    {method} constructor ()
+    {methond} owner() public view returns (address)
+    {methond} modifier onlyOwner()
+    {field}address private origOwner;
+    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
+    {method} function isOwner() public view returns (bool)
+    {method} function renounceOwnership() public onlyOwner 
+    {method} function transferOwnership(address newOwner) public onlyOwner
+    {method} function _transferOwnership(address newOwner) internal
+}
 ```
 
 ### Requirement 4: Build out Core Contract
