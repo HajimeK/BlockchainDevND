@@ -278,6 +278,24 @@ Coffee -> Consumer : fetchItem()
 Coffee -> Consumer : fetchItem()
 ```
 
+<br>
+
+```plantuml
+[*] --> Harvested
+Harvested : this is a string
+Harvested : this is another string
+
+Harvested --> Processed
+Processed --> Packed
+Packed --> Selling
+Selling --> Purchased
+Purchased --> Shipped
+Shipped --> Received
+Received --> [*]
+```
+
+<br>
+
 | No. | test target | Test logic | Success Criteria |
 |-----|-------------|------------|------------------|
 |     |             |            |                  |
