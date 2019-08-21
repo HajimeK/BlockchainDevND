@@ -1,6 +1,6 @@
 # Ethereum Dapp for Tracking Items through Suuply Chain
 
-Learn lower level components of establishing a soud web service architecture using Blockchain.
+Learn lower level components of establishing a sound web service architecture using Blockchain.
 
 # Part 1 : Plan the project with write-ups
 
@@ -12,6 +12,8 @@ If libraries are used in the project, the project write-up indicates which libra
 
 ## Requirement 3: Project write-up - IPFS
 If IPFS is used, the project write-up discusses how IPFS is used in this project.
+
+
 
 # Part 2 : Write smart contracts
 
@@ -120,17 +122,6 @@ Class SupplyChain {
     {method}fetchItemBufferTwo(uint _upc) public view returns
 }
 
-Class Palette {
-    {field}Product ID
-    {field}Product UPC
-    {field}Origination Information
-    {field}Origin Actor 
-    {field}Misc. organization information
-    {field}Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
-    {field}Product notes
-    {field}Product price
-}
-
 Class Item <<struct>> {
     uint    sku
     uint    upc
@@ -179,11 +170,26 @@ Class Consumer {
     {method} buyCoffeePalletes
 }
 
-SupplyChain <-down- Owner
-Owner <|-- Farmer
-Owner <|-- Distributor
-Owner <|-- Retailer
-Owner <|-- Consumer
+
+Class Ownable {
+    {field}  address private origOwner;
+    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
+    {method} constructor ()
+    {methond} owner() public view returns (address)
+    {methond} modifier onlyOwner()
+    {field}address private origOwner;
+    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
+    {method} function isOwner() public view returns (bool)
+    {method} function renounceOwnership() public onlyOwner 
+    {method} function transferOwnership(address newOwner) public onlyOwner
+    {method} function _transferOwnership(address newOwner) internal
+}
+
+FarmerRole <|-- SupplyChain
+DistributorRole <|-- SupplyChain
+RetailerRole <|-- SupplyChain
+ConsumerRole <|-- SupplyChain
+Ownable <|-down- SupplyChain
 
 Class Roles <<library>> {
   {field} struct Role
@@ -215,19 +221,13 @@ DistributorRole o-- Distributor
 RetailerRole o-- Retailer
 ConsumerRole o-- Consumer
 
-Class Ownable {
-    {field}  address private origOwner;
-    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
-    {method} constructor ()
-    {methond} owner() public view returns (address)
-    {methond} modifier onlyOwner()
-    {field}address private origOwner;
-    {method} event TransferOwnership(address indexed oldOwner, address indexed newOwner);
-    {method} function isOwner() public view returns (bool)
-    {method} function renounceOwnership() public onlyOwner 
-    {method} function transferOwnership(address newOwner) public onlyOwner
-    {method} function _transferOwnership(address newOwner) internal
-}
+Roles *-- FarmerRole
+Roles *-- DistributorRole
+Roles *-- RetailerRole
+Roles *-- ConsumerRole
+
+SupplyChain -down-> Item
+
 ```
 
 ### Requirement 4: Build out Core Contract
@@ -281,17 +281,19 @@ Coffee -> Consumer : fetchItem()
 <br>
 
 ```plantuml
-[*] --> Harvested
+[*] -down-> Harvested : Farmer to call harvestItem()
+Harvested -down-> Processed : Farmer to call processItem
+Processed -down-> Packed : Farmer to call pack
+Packed -down-> ForSale : Farmer to mark for sale.
+ForSale -down-> Sold : Distributor to buy item
+Sold -down-> Shipped : Distributor to ship item
+Shipped -down-> Received : Reailer received.
+Received -down-> Purchased : Consumer to purchase
+Purchased -down-> [*]
+
+
 Harvested : this is a string
 Harvested : this is another string
-
-Harvested --> Processed
-Processed --> Packed
-Packed --> Selling
-Selling --> Purchased
-Purchased --> Shipped
-Shipped --> Received
-Received --> [*]
 ```
 
 <br>
