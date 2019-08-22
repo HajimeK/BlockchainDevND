@@ -10,6 +10,9 @@ This part should be easy! Simply add in the diagrams you create in Part A of the
 ## Requirement 2: Project write-up - Libraries
 If libraries are used in the project, the project write-up indicates which libraries and discusses why these libraries were adopted.
 
+Truffle v5.0.31 (core: 5.0.31)
+Node v10.16.2
+
 ## Requirement 3: Project write-up - IPFS
 If IPFS is used, the project write-up discusses how IPFS is used in this project.
 
