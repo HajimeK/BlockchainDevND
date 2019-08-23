@@ -1,70 +1,15 @@
 # Ethereum Dapp for Tracking Items through Suuply Chain
 
 Learn lower level components of establishing a sound web service architecture using Blockchain.
+This document is the project execution report, including design in UML, contract tests, test network deployment, and front end tests.
 
 # Part 1 : Plan the project with write-ups
 
 ## Requirement 1: Project write-up - UML
-This part should be easy! Simply add in the diagrams you create in Part A of the project. If any changes were made during the contract creation beside to add those changes to your UML diagrams and add them to your write up.
 
-## Requirement 2: Project write-up - Libraries
-If libraries are used in the project, the project write-up indicates which libraries and discusses why these libraries were adopted.
+### Use Case
 
-Truffle v5.0.31 (core: 5.0.31)
-Node v10.16.2
-npm install --save truffle-hdwallet-provider
-
-## Requirement 3: Project write-up - IPFS
-If IPFS is used, the project write-up discusses how IPFS is used in this project.
-
-
-
-# Part 2 : Write smart contracts
-
-## Requirement 1: Define and implement required interfaces
-First, download the provided starter code and review all the files. Add in any interfaces you use.
-
-Download Starter Code
-
-The starter code contains a skeleton for the smart contracts, test file, and migration files you will need to build out. Since there will be quite a bit of specialized logic, the code is split into smaller contracts that bundle related code together. The subcontract inheritance looks like this:
-
-```
-contract AccessControl
-contract Base is AccessControl
-contract Core is Base
-```
-**AccessControl - Collection of Contracts**: These contracts manages the various addresses and constraints for operations that can be executed only by specific roles.
-
-**Base - SupplyChain.sol**: This is where we define the most fundamental code shared throughout the core functionality. This includes our main data storage, constants and data types, plus internal functions for managing these items.
-
-
-```plantuml
-Class Base
-note right : main data storage,\nconstants\ndata types\ninternal functions for managing these items.
-```
-
-**Core - Ownable.sol**: is the contract that controls ownership and transfer of ownership.
-
-
-```plantuml
-Class Core
-note right : the contract that controls\nownership \ntransfer of ownership
-```
-
-### Requirement 2: Build out AccessControl Contracts
-From the Starter Code, the files in coffeeaccesscontrol controls access control for each actor.
-
-Build out these contracts so that each actor’s role in your supply chain is distinct with no overlap in their access abilities. The abilities listed for each role are exhaustive.
-
-*Example of 4 actors in a coffee supply chain are*:
-
-| Actor       | Capability                                                                                                                                           |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Farmer      | The Farmer can harvest coffee beans, process coffee beans, pack coffee  palettes, add coffee palettes, ship coffee palettes, and track authenticity. |
-| Distributor | The Distributor can buy coffee palettes and track authenticity.                                                                                      |
-| Retailer    | The Retailer can receive coffee palettes and track authenticity.                                                                                     |
-| Consumer    | The consumer can buy coffee palettes and track authenticity.                                                                                         |
-
+![](images/UseCase.png)
 
 ```plantuml
 :Farmer:
@@ -89,20 +34,62 @@ Consumer -> (buy coffee palettes)
 Consumer -down-> (track authenticity)
 ```
 
-### Requirement 3: Build out Base Contract
-From the Starter Code, SupplyChain.sol contract holds all common structs, events and base variables.
+### Seuquence Diagram
 
-This smart contract must implement functions that track:
+![](images/Sequence.png)
 
-- Product ID
-- Product UPC
-- Origination Information
-- Origin Actor (e.g. Farmer ID, Farmer Name, )
-- Misc. organization information (e.g. Farmer Information)
-- Longitude and Latitude of Origin Coordinates (e.g. Farm’s Longitude and Latitude)
-- Product notes
-- Product price
+```plantuml
+entity Coffee
+actor Farmer
+actor Distributor
+actor Retailer
+actor Consumer
 
+Farmer -> Coffee : harvestItem()
+   activate Farmer
+   activate Coffee
+Farmer -> Coffee : processItem()
+Farmer -> Coffee : packItem()
+Farmer -> Coffee : addItem()
+   activate Distributor
+Distributor -> Farmer : buyItem()
+   deactivate Distributor
+Farmer -> Retailer : shipItem()
+   activate Retailer
+Retailer -> Farmer : receiveItem()
+   deactivate Farmer
+Consumer -> Retailer : purchaseItem()
+   activate Consumer
+   deactivate Retailer
+Coffee -> Consumer : fetchItem()
+Coffee -> Consumer : fetchItem()
+   deactivate Consumer
+   deactivate Coffee
+```
+
+### State Diagram
+
+![](images/State.png)
+
+```plantuml
+[*] -down-> Harvested : Farmer to call harvestItem()
+Harvested -down-> Processed : Farmer to call processItem
+Processed -down-> Packed : Farmer to call pack
+Packed -down-> ForSale : Farmer to mark for sale.
+ForSale -down-> Sold : Distributor to buy item
+Sold -down-> Shipped : Distributor to ship item
+Shipped -down-> Received : Reailer received.
+Received -down-> Purchased : Consumer to purchase
+Purchased -down-> [*]
+
+
+Harvested : this is a string
+Harvested : this is another string
+```
+
+### Class Diagram
+
+![](images/ClassDiagram.png)
 ```plantuml
 
 Class SupplyChain {
@@ -141,37 +128,6 @@ Class Item <<struct>> {
     address distributorID
     address retailerID
     address consumerID
-}
-
-Abstract Class Owner {
-
-}
-
-Class Farmer {
-    {field} Farmer ID
-    {field} Farmer Name
-    {field} Farmer Information
-    {field} Farm's Longitude
-    {field} Farm's Latitude
-    {method} harvest()
-    {method} pack()
-    {method} process()
-    {method} add{}
-    {method} pack()
-    {methond} ship{}
-}
-
-Class Distributor {
-    {method} buyCoffee()
-}
-
-Class Retailer {
-    {method} receiveCoffeePalletes
-    {method}
-}
-
-Class Consumer {
-    {method} buyCoffeePalletes
 }
 
 
@@ -220,11 +176,6 @@ Role <-- DistributorRole
 Role <-- RetailerRole
 Role <-- ConsumerRole
 
-FarmerRole o-- Farmer
-DistributorRole o-- Distributor
-RetailerRole o-- Retailer
-ConsumerRole o-- Consumer
-
 Roles *-- FarmerRole
 Roles *-- DistributorRole
 Roles *-- RetailerRole
@@ -234,14 +185,21 @@ SupplyChain -down-> Item
 
 ```
 
-### Requirement 4: Build out Core Contract
-Ownable.sol is the contract that controls ownership and transfer of ownership.
 
-This Core Contract must implement:
 
-Ownable - Define an owner for all the contracts.
-Secondary - Allows contract to be transferred owners.
-This has been provided in the starter code.
+## Requirement 2: Project write-up - Libraries
+
+- Truffle v5.0.31 (core: 5.0.31)
+- Node v10.16.2
+- npm install --save truffle-hdwallet-provider
+
+## Requirement 3: Project write-up - IPFS
+
+NA
+
+# Part 2 : Write smart contracts
+
+GitHub Repository (https://github.com/HajimeK/BlockchainDevND/tree/master/projects/project_6_Supply_Chain/project/contracts)
 
 ## Part 3: Test smart contract code coverage
 
@@ -263,42 +221,11 @@ purchaseItem()
 fetchItemBufferOne()
 fetchItemBufferTwo()
 
-```plantuml
-entity Coffee
-actor Farmer
-actor Distributor
-actor Retailer
-actor Consumer
 
-Farmer -> Coffee : harvestItem()
-Farmer -> Coffee : processItem()
-Farmer -> Coffee : packItem()
-Farmer -> Coffee : addItem()
-Distributor -> Farmer : buyItem()
-Farmer -> Retailer : shipItem()
-Retailer -> Farmer : receiveItem()
-Consumer -> Retailer : purchaseItem()
-Coffee -> Consumer : fetchItem()
-Coffee -> Consumer : fetchItem()
-```
 
 <br>
 
-```plantuml
-[*] -down-> Harvested : Farmer to call harvestItem()
-Harvested -down-> Processed : Farmer to call processItem
-Processed -down-> Packed : Farmer to call pack
-Packed -down-> ForSale : Farmer to mark for sale.
-ForSale -down-> Sold : Distributor to buy item
-Sold -down-> Shipped : Distributor to ship item
-Shipped -down-> Received : Reailer received.
-Received -down-> Purchased : Consumer to purchase
-Purchased -down-> [*]
 
-
-Harvested : this is a string
-Harvested : this is another string
-```
 
 <br>
 
@@ -716,12 +643,8 @@ We can see the contract deployment and succeeding transactions as below.
 
 ![](2019-08-06-14-57-40.png)
 
-Once your smart contract is created, it’s time to go live! For this project, deploy your smart contract on the Ethereum RINKEBY test network.
-
-* **Requirement 1**	Deploy smart contract on a public test network
-* **Requirement 2**	Submit Transaction hash, contract hash, and contract address
-
 ### Requirement 1: Deploy smart contract on a public test network
+
 Using Truffle framework, deploy your smart contract with the Rinkeby test network. Take note of your contract hash and address after successful deployment.
 
 Tip: Refer to Infura screencast for assistance on deploying your smart contract with Infura and Truffle.
@@ -986,12 +909,6 @@ Summary
 ### Requirement 2: Submit Contract Address
 Provide a document with your project submission that includes the contract address.
 
-Document for your project must be in either ".txt" or ".md" format.
-
-Hint: You can view the Contract address using a blockchain explorer (e.g. Etherscan).
-
-Example of a random Contract address on the Rinkeby test network : https://rinkeby.etherscan.io/address/0xfb0720c0715e68f80c0c
-
 | Contract        | Address                                    | Link in Rinkeby                                                                 |
 |-----------------|--------------------------------------------|---------------------------------------------------------------------------------|
 | SupplyChain     | 0xF00535af2920646345c01D6d3D9b04734069C3d1 | https://rinkeby.etherscan.io/address/0xF00535af2920646345c01D6d39b04734069C3d1  |
@@ -1003,14 +920,8 @@ Example of a random Contract address on the Rinkeby test network : https://rinke
 | ConsumerRole    | 0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d | https://rinkeby.etherscan.io/address/0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d |
 | Migrations      | 0x5A705378F1aC4BAec8BDd0b1bd236fbf33bE271C | https://rinkeby.etherscan.io/address/0x5A705378F1aC4BAec8BDd0b1bd236fbf33bE271C |
 
+
 ## Part 5 : Modify client code to interact with smart contract
-
-Create the frontend that allows your users to interact with your DApp. This should be a simple and clean frontend that manages product lifecycle as the product navigates down the supply chain.
-
-Using javascript, create a single JS file with all web3 functions that allows your client code to interact with you smart contracts.
-
-The coffee example in the boilerplate provides this code for you.
-
 
 ### Requirement: Configure client code for each actor
 Front-end is configured to:
@@ -1020,20 +931,50 @@ Front-end is configured to:
 3) Validate the authenticity of the product.
 Frontend code can be downloaded and executed from a local environment.
 
+The code can be found in Git Hub
+- https://github.com/HajimeK/BlockchainDevND/blob/master/projects/project_6_Supply_Chain/project/index.html
+- https://github.com/HajimeK/BlockchainDevND/blob/master/projects/project_6_Supply_Chain/project/app/src/app.js
+- https://github.com/HajimeK/BlockchainDevND/blob/master/projects/project_6_Supply_Chain/project/app/src/truffle-contract.js
 
 
+Run the network with truffle
+```basch
+truffle develop
+truffle(develop)> deploy
+```
+
+Launch dApp and frontent
 ```basch
 cd .../project
 npm init
 npm run dev
 ```
 
+*Transaction History*
+- FarmerAdded - 0x9d2975178f446195cb9f529405d6c00d05e57abf5598d28dc5d859189fcb470c
+- DistributorAdded - 0x9c976be59452710da8b028b6cfffdbb341b6e4f7824b6a9bc6fb5b1b5b74c12a
+- RetailerAdded - 0x3fbb2ea5cb43a2f41dd49139d1ff2e9a90adc6f6ff9b098f7bf9f4b3488178af
+- ConsumerAdded - 0x56c9f0169dcc12cf14c35203da7d887639a1845a50e9994db916c41044d72a88
+- Harvested - 0x55d20b80ee35bf06fa2b829cdecd8301405ebc6e134ef1b7e1bb0f6e225e7a88
+- Processed - 0xf5a854fc7dc48621e7a89635ce0527a794a39a5e62f600aceb75192ac48a0f37
+- Packed - 0xb3dfcec91300caacfce15a4ec8950ffcae246a8636378b0a97ea5c0e626beee0
+- ForSale - 0x66e2e1bc2d40e650f1b9a3c9e4be89b3b9668e54d3e2cc917ce12bd6fd34c5c8
+- Sold - 0x0aa872df0038f1ff3af7ce44e37f94db75644be4980c859b1abd344509a96623
+- Shipped - 0x1f04a3d2d31769af0690c50260fc721cd360b1f05f9e5536db3c136c6a933946
+- Received - 0xa90b3e78bdeb9471ac7eb193e35bb6b132587d51163caf41be68bed993a59496
+- Purchased - 0xa2114bc65c9521e598fe8d81d34fa453e6ca331479dea4b3e4530e910890b2f4
+
+*Item Details*
+- SKU 2
+- UPC 1
+- ProductID 3
+- ProductPrice 1000000000000000000
+- ItemState Purchased
+- DistributorID 0xaba5a03f37a519f53acce9c711c065e2ca560e5a
+- RetailerID 0xa71e4e3b0abd326f4b57f29da4d04fcaf0b52269
+- ConsumerID 0x5329ca87ba64ff65fd00158917408b6149a13847
 
 
 # Optional : Implement infura to store product image
 
-NOTE: This section is not required for your project to pass. These steps are purely optional and a way for you to expand on your project.
-
-Using your previous coursework experience, modify your DApp to allow the initial producer in the supply chain to upload an image of the product along with the UPC hash and store this image using Infura.
-
-Consider including 2 methods - upload() and read()
+NA

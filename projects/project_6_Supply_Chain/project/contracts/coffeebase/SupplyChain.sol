@@ -285,8 +285,8 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   // Use the above modifiers to check if the item is shipped
   function receiveItem(uint _upc) public
     // Call modifier to check if upc has passed previous supply chain stage
-    onlyRetailer
     shipped(_upc)
+    //verifyCaller(items[_upc].retailerID)
     // Access Control List enforced by calling Smart Contract / DApp
     {
     // Update the appropriate fields - ownerID, retailerID, itemState
