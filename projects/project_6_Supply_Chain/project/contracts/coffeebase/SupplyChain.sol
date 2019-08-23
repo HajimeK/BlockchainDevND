@@ -23,7 +23,7 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   // Define a public mapping 'items' that maps the UPC to an Item.
   mapping (uint => Item) items;
 
-  // Define a public mapping 'itemsHistory' that maps the UPC to an array of TxHash, 
+  // Define a public mapping 'itemsHistory' that maps the UPC to an array of TxHash,
   // that track its journey through the supply chain -- to be sent from DApp.
   mapping (uint => string[]) itemsHistory;
 
@@ -74,19 +74,19 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   // Define a modifer that checks to see if msg.sender == owner of the contract
   modifier onlyOwner() {
 //    require(msg.sender == owner);
-    require(isOwner());
+    require(isOwner(), "Not an owner");
     _;
   }
 
   // Define a modifer that verifies the Caller
   modifier verifyCaller (address _address) {
-    require(msg.sender == _address);
+    require(msg.sender == _address, "Invalid caller");
     _;
   }
 
   // Define a modifier that checks if the paid amount is sufficient to cover the price
   modifier paidEnough(uint _price) {
-    require(msg.value >= _price);
+    require(msg.value >= _price, "Not paid enough");
     _;
   }
 
@@ -199,11 +199,11 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   }
 
   // Define a function 'processtItem' that allows a farmer to mark an item 'Processed'
-  function processItem(uint _upc) public 
+  function processItem(uint _upc) public
   // Call modifier to check if upc has passed previous supply chain stage
   harvested(_upc)
   // Call modifier to verify caller of this function
-  onlyFarmer
+  //onlyFarmer
   verifyCaller(items[_upc].originFarmerID)
   {
     // Update the appropriate fields
@@ -227,7 +227,7 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   }
 
   // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
-  function sellItem(uint _upc, uint _price) public 
+  function sellItem(uint _upc, uint _price) public
   // Call modifier to check if upc has passed previous supply chain stage
   packed(_upc)
   // Call modifier to verify caller of this function
@@ -242,7 +242,7 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   }
 
   // Define a function 'buyItem' that allows the disributor to mark an item 'Sold'
-  // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
+  // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough,
   // and any excess ether sent is refunded back to the buyer
   function buyItem(uint _upc) public payable
     // Call modifier to check if upc has passed previous supply chain stage
@@ -307,7 +307,7 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
     {
     // Update the appropriate fields - ownerID, consumerID, itemState
     items[_upc].ownerID = msg.sender;
-    items[_upc].retailerID = msg.sender;
+    items[_upc].consumerID = msg.sender;
     items[_upc].itemState = State.Purchased;
     // Emit the appropriate event
     emit Purchased(_upc);
@@ -350,7 +350,7 @@ contract SupplyChain  is Ownable, ConsumerRole, DistributorRole, RetailerRole, F
   }
 
   // Define a function 'fetchItemBufferTwo' that fetches the data
-  function fetchItemBufferTwo(uint _upc) public view returns 
+  function fetchItemBufferTwo(uint _upc) public view returns
   (
     uint    itemSKU,
     uint    itemUPC,

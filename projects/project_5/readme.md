@@ -87,7 +87,7 @@ Updated *truffle-config.js* to include the following
 Created a *.secret* file to include the mnemonik in MetaMask.
 
 Then run below to deploy to Rinkeby
->    truffle migrate --reset --network rinkeby
+>    truffle migrate --reset --network Rinkeby
 
 We can see the contract deployment and succeeding transactions as below.
 
