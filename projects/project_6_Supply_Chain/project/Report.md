@@ -58,12 +58,12 @@ Build out these contracts so that each actor’s role in your supply chain is di
 
 *Example of 4 actors in a coffee supply chain are*:
 
-| Actor | Capability |
-|----|----|
-| Farmer | The Farmer can harvest coffee beans, process coffee beans, pack coffee  palettes, add coffee palettes, ship coffee palettes, and track authenticity. |
-| Distributor | The Distributor can buy coffee palettes and track authenticity. |
-| Retailer | The Retailer can receive coffee palettes and track authenticity. |
-| Consumer | The consumer can buy coffee palettes and track authenticity. |
+| Actor       | Capability                                                                                                                                           |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Farmer      | The Farmer can harvest coffee beans, process coffee beans, pack coffee  palettes, add coffee palettes, ship coffee palettes, and track authenticity. |
+| Distributor | The Distributor can buy coffee palettes and track authenticity.                                                                                      |
+| Retailer    | The Retailer can receive coffee palettes and track authenticity.                                                                                     |
+| Consumer    | The consumer can buy coffee palettes and track authenticity.                                                                                         |
 
 
 ```plantuml
@@ -992,6 +992,17 @@ Hint: You can view the Contract address using a blockchain explorer (e.g. Ethers
 
 Example of a random Contract address on the Rinkeby test network : https://rinkeby.etherscan.io/address/0xfb0720c0715e68f80c0c
 
+| Contract        | Address                                    | Link in Rinkeby                                                                 |
+|-----------------|--------------------------------------------|---------------------------------------------------------------------------------|
+| SupplyChain     | 0xF00535af2920646345c01D6d3D9b04734069C3d1 | https://rinkeby.etherscan.io/address/0xF00535af2920646345c01D6d39b04734069C3d1  |
+| Ownable         | -                                          | -                                           |
+| Roles           | -                                          | -                                           |
+| FarmerRole      | 0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d | https://rinkeby.etherscan.io/address/0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d |
+| DistributorRole | 0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d | https://rinkeby.etherscan.io/address/0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d |
+| RetailerRole    | 0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d | https://rinkeby.etherscan.io/address/0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d |
+| ConsumerRole    | 0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d | https://rinkeby.etherscan.io/address/0x7Ee277ded76d22aCf98257e82018D9E85eC0Dd5d |
+| Migrations      | 0x5A705378F1aC4BAec8BDd0b1bd236fbf33bE271C | https://rinkeby.etherscan.io/address/0x5A705378F1aC4BAec8BDd0b1bd236fbf33bE271C |
+
 ## Part 5 : Modify client code to interact with smart contract
 
 Create the frontend that allows your users to interact with your DApp. This should be a simple and clean frontend that manages product lifecycle as the product navigates down the supply chain.
@@ -1008,6 +1019,16 @@ Front-end is configured to:
 2) Receive product from shipment.
 3) Validate the authenticity of the product.
 Frontend code can be downloaded and executed from a local environment.
+
+
+
+```basch
+cd .../project
+npm init
+npm run dev
+```
+
+
 
 # Optional : Implement infura to store product image
 
