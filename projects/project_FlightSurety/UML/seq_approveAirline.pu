@@ -1,0 +1,17 @@
+@startuml
+actor Passenger
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+Airline -> DApp : Press Approve Airline Button
+DApp -> FlightSuretyApp : approveAirline(msg.sender, airline account)
+FlightSuretyApp -> FlightSuretyData: approveAirline()
+note over FlightSuretyData
+    add the approver account to the  list of approvers in the Airline
+end note
+@enduml

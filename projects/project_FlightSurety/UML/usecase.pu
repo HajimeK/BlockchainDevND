@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor Airline
+actor Passenger
+rectangle checkout {
+  Airline -> (Register Airline)
+  Airline -> (Approve Airline)
+  Airline -> (Transfer Fund)
+  Airline -> (Register Flight)
+  Airline -> (Update Flight Status)
+  Passenger -> (Purchase Flight Insurance)
+  Passenger <- (Flight Delay)
+}
+@enduml

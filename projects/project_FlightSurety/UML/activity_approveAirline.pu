@@ -1,0 +1,19 @@
+@startuml
+|dApp|
+start
+:watch Event;
+|Airline|
+:approveAirline;
+|FlightSuretyApp|
+:approveAirline;
+    note right
+        true: approve, false: reject
+    end note
+if (acquired necessary approval) then (yes)
+    ->
+    |FlightSuretyApp|
+    :updateAiline to registered status;
+    #RosyBrown:emit approvedAirline;
+endif
+end
+@enduml

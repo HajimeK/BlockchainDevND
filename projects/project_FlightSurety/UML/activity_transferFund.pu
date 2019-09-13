@@ -1,0 +1,13 @@
+@startuml
+|dApp|
+start
+:watch Event;
+|Airline|
+:receive Airline approval;
+|FlightSuretyApp|
+:transferFund;
+|FlightSuretyData|
+:updateAirlline;
+end
+
+@enduml

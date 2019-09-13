@@ -1,0 +1,16 @@
+@startuml
+actor Passenger
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+Passenger -> DApp : request buy a flight insurance
+DApp -> FlightSuretyApp : purchaseFlightInsurance(account, payment, ailine, flight, timestamp)
+FlightSuretyApp -> FlightSuretyData: call.buy.valu(payment)(msg.sender, airline, flight, timestamp)
+FlightSuretyApp -> Oracle : emit eventPurchasedFlightInsurance
+Oracle -> FlightSuretyDB : add to the the flight, insurance passenger pair.
+@enduml

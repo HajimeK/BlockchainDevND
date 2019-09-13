@@ -1,0 +1,73 @@
+@startuml
+actor Passenger
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+alt Passenger triggers the DApp webpage
+    Passenger -> DApp : Load Web Page
+else Ailine triggers the DApp webpage
+    Airline -> DApp : Load Web Page
+end
+DApp -> FlightSuretyApp : queryAccountType {Passenger, Airline}
+    activate FlightSuretyApp
+FlightSuretyApp -> FlightSuretyData : isAirline or isPassenger
+    activate FlightSuretyData
+FlightSuretyData --> FlightSuretyApp : boolean result
+    deactivate FlightSuretyData
+FlightSuretyApp --> DApp
+    deactivate FlightSuretyApp
+
+alt Account Type is Passenger
+    note over DApp, FlightSuretyApp
+        Get a list of flights.
+        For flights, that purchased insurance, just display the status.
+        For flights, not purchases, show input field and button
+    end note
+    DApp -> FlightSuretyApp : queryFlights(msg.sender)
+        note right
+            Get flights that passenger bought the insurance
+        end note
+    FlightSuretyApp -> Oracle: emit queryFlight event
+    ...
+    Oracle-> FlightSuretyDB : get flighs for the passenger
+    FlightSuretyDB --> Oracle: list of flights
+    Oracle -> FlightSuretyApp : listenQueryFlightsResponse(myflights)
+    FlightSuretyApp -> DApp: emit queryFlightsResponse
+        note over DApp
+            Display a list of the passenger insuranced flights
+            Diaply a flight code, and payment input field to buy insurance
+        end note
+
+else Account Type is Airline
+    DApp -> FlightSuretyApp : getAilirlineStatus()
+    FlightSuretyApp -> FlightSuretyData: isApproved()
+    FlightSuretyData --> FlightSuretyApp: approved = (true, false)
+    FlightSuretyApp -> FlightSuretyData: isFunded()
+    FlightSuretyData --> FlightSuretyApp: funded = (true, false)
+    FlightSuretyApp --> DApp: airline status == (enum{approved_funded, approved, rejected, registered})
+    alt approved_funded
+        note over Airline, DApp
+            show create flight with flight no, departure timestamp
+            update flight status with status drop down
+        end note
+    else approved
+        note over Airline, DApp
+            Show Fund button
+        end note
+    else rejected
+        note over Airline, DApp
+            Show reject message
+        end note
+    else registered
+        note over Airline, DApp
+            Show under approval process message
+        end note
+    end
+end
+
+@enduml

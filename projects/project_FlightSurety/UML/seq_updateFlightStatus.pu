@@ -1,0 +1,54 @@
+@startuml
+actor Passenger
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+Airline -> DApp : update flight status
+DApp -> FlightSuretyApp : updateFlightStatus(msg.sender, flight states)
+FlightSuretyApp -> Oracle: emit eventFlightStatus Update
+...
+Oracle -> FlightSuretyDB: update Flight status with status code
+Oracle -> FlightSuretyApp: call listenFlightStatusChange
+alt STATUS_CODE_UNKNOWN = 0
+    note over FlightSuretyApp
+        TBD
+    end note
+else STATUS_CODE_ON_TIME = 10
+    note over FlightSuretyApp
+        TBD
+    end note
+else STATUS_CODE_LATE_AIRLINE = 20
+    FlightSuretyApp -> Oracle: emit queryPassengersForTheFlight
+    ...
+    Oracle -> FlightSuretyDB : query queryPassengersForTheFlight
+    FlightSuretyDB --> Oracle : list of passengers for the flight
+    Oracle -> FlightSuretyApp : call listenPayInsurence(flight, passenger, payment)
+    loop for all passengers of the flight
+        FlightSuretyApp -> FlightSuretyData: pay(payment amount, passenger)
+    end
+    FlightSuretyApp -> Oracle: emit eventPaidInsurence(flight)
+    ...
+    Oracle -> FlightSuretyDB : mark paid insureance
+    note over Passenger
+        see if the insurance are paid
+    end note
+else STATUS_CODE_LATE_WEATHER = 30
+    note over FlightSuretyApp
+        TBD
+    end note
+else STATUS_CODE_LATE_TECHNICAL = 40
+    note over FlightSuretyApp
+        TBD
+    end note
+else STATUS_CODE_LATE_OTHER = 50
+    note over FlightSuretyApp
+        TBD
+    end note
+end
+
+@enduml

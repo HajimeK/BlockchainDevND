@@ -1,0 +1,13 @@
+@startuml
+|Airline|
+start
+:updateflight;
+|dApp|
+:updateflight;
+|FlightSuretyApp|
+:processFlightStatus;
+|Oracle|
+|FlightSuretyData|
+:registerFlight;
+end
+@enduml

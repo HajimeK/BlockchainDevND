@@ -1,0 +1,14 @@
+@startuml
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+Airline -> DApp : register(msg.sender)
+DApp -> FlightSuretyApp :regusterAieline(msg.senter, name)
+FlightSuretyApp -> FlightSuretyData : registerAirline(msg.senter, name)
+
+@enduml

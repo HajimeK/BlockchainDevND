@@ -1,0 +1,15 @@
+@startuml
+title Register Airline
+|Airline|
+start
+:Register;
+|dApp|
+:RegisterAirline;
+|FlightSuretyApp|
+:registerAirline;
+|FlightSuretyData|
+:registerAirline;
+|FlightSuretyApp|
+#RosyBrown:emitRegisterFlight;
+end
+@enduml

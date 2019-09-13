@@ -1,0 +1,16 @@
+@startuml
+actor Passenger
+actor Airline
+boundary DApp
+control FlightSuretyApp
+control FlightSuretyData
+control Oracle
+database FlightSuretyDB
+
+autonumber "<b>[000]"
+Airline -> DApp: reqister flight
+DApp -> FlightSuretyApp: registerFlight
+FlightSuretyApp -> Oracle : emit regiserFlight
+...
+Oracle -> FlightSuretyDB : add flight with unknown status
+@enduml
