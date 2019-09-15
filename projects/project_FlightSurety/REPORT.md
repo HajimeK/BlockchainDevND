@@ -2,6 +2,14 @@
 
 ## Setup and Run
 
+## Software Versions
+
+$ truffle version
+Truffle v5.0.31 (core: 5.0.31)
+Solidity - ^0.4.24 (solc-js)
+Node v10.16.2
+Web3.js v1.2.1
+
 ### Install
 
 This repository contains Smart Contract code in Solidity (using Truffle), tests (also using Truffle), dApp scaffolding (using HTML, CSS and JS) and server app scaffolding.
