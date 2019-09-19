@@ -1,0 +1,8 @@
+@startsalt
+{
+  ^Flight 001^
+  Airline       | "JAL"
+  Flight Status | "LATE AIRLINE"
+  Insurance Paid
+}
+@endsalt

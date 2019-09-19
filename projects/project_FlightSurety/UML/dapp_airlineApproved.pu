@@ -1,0 +1,7 @@
+@startsalt
+{
+    Appvoed. Please fund.
+    Amount | "            1" | ether
+    |[Fund]|
+}
+@endsalt

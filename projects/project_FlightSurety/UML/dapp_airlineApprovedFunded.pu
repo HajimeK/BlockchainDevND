@@ -1,0 +1,15 @@
+@startsalt
+{
+    {^"Registered Flight Maintenance"
+        ^Flight 000^
+        ^ON TIME^
+        [       Update Status        ]
+    }
+    --
+    {^"New Flight Registration"
+        "         003"
+        [          Register          ]
+    }
+}
+
+@endsalt

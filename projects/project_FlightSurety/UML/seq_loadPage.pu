@@ -15,9 +15,9 @@ else Ailine triggers the DApp webpage
 end
 DApp -> FlightSuretyApp : queryAccountType {Passenger, Airline}
     activate FlightSuretyApp
-FlightSuretyApp -> FlightSuretyData : isAirline or isPassenger
+FlightSuretyApp -> FlightSuretyData : getAccountType(msg.sender)
     activate FlightSuretyData
-FlightSuretyData --> FlightSuretyApp : boolean result
+FlightSuretyData --> FlightSuretyApp : result (None, Passenger, Airline)
     deactivate FlightSuretyData
 FlightSuretyApp --> DApp
     deactivate FlightSuretyApp
@@ -50,23 +50,91 @@ else Account Type is Airline
     FlightSuretyApp -> FlightSuretyData: isFunded()
     FlightSuretyData --> FlightSuretyApp: funded = (true, false)
     FlightSuretyApp --> DApp: airline status == (enum{approved_funded, approved, rejected, registered})
-    alt approved_funded
+    alt registered
         note over Airline, DApp
-            show create flight with flight no, departure timestamp
-            update flight status with status drop down
+            Show under approval process message
         end note
     else approved
         note over Airline, DApp
             Show Fund button
         end note
+        Airline --> DApp: Fund
+        DApp -> FlightSuretyApp: Fund
+        FlightSuretyApp -> FlightSuretyApp: registerOracle
+        FlightSuretyApp --> DApp: emit eventAirlineFunded
+    else approved_funded
+        note over Airline, DApp
+            show create flight with flight no, departure timestamp
+            update flight status with status drop down
+        end note
+        == register flight ==
+        Airline -> DApp: reqister flight
+        DApp -> FlightSuretyApp: registerFlight
+        FlightSuretyApp -> Oracle : emit regiserFlight
+        ...
+        Oracle -> FlightSuretyDB : add flight with unknown status
+        == update flight status ==
+
+        Airline -> DApp : update flight status
+        DApp -> FlightSuretyApp : updateFlightStatus(msg.sender, flight states)
+        FlightSuretyApp -> Oracle: emit eventFlightStatusUpdate
+        ...
+        Oracle -> FlightSuretyDB: update Flight status with status code
+        Oracle -> FlightSuretyApp: call listenFlightStatusChange
+        alt STATUS_CODE_UNKNOWN = 0
+            note over FlightSuretyApp
+                TBD
+            end note
+        else STATUS_CODE_ON_TIME = 10
+            note over FlightSuretyApp
+                TBD
+            end note
+        else STATUS_COName: PlantUML Previewer
+            FlightSuretyApp -> Oracle: emit queryPassengersForTheFlight
+            ...
+            Oracle -> FlightSuretyDB : query queryPassengersForTheFlight
+            FlightSuretyDB --> Oracle : list of passengers for the flight
+            Oracle -> FlightSuretyApp : call listenPayInsurence(flight, passenger, payment)
+            loop for all passengers of the flight
+                FlightSuretyApp -> FlightSuretyData: pay(payment amount, passenger)
+            end
+            FlightSuretyApp -> Oracle: emit eventPaidInsurence(flight)
+            ...
+            Oracle -> FlightSuretyDB : mark paid insureance
+            note over Passenger
+                see if the insurance are paid
+            end note
+        else STATUS_CODE_LATE_WEATHER = 30
+            note over FlightSuretyApp
+                TBD
+            end note
+        else STATUS_CODE_LATE_TECHNICAL = 40
+            note over FlightSuretyApp
+                TBD
+            end note
+        else STATUS_CODE_LATE_OTHER = 50
+            note over FlightSuretyApp
+                TBD
+            end note
+        end
     else rejected
         note over Airline, DApp
             Show reject message
         end note
-    else registered
-        note over Airline, DApp
-            Show under approval process message
+    end
+else None
+    note over DApp
+        Show "Register As a Passenger", "Register As an Airline" button.
+    end note
+    alt register a Passenger
+        note over DApp
+            reload the page
         end note
+    else register an Airline
+    Airline -> DApp : register(msg.sender)
+        DApp -> FlightSuretyApp :registerAieline(msg.senter, name)
+        FlightSuretyApp -> FlightSuretyData : registerAirline(msg.senter, name)
+        FlightSuretyApp->DApp: emit eventAirlineRegistered
     end
 end
 

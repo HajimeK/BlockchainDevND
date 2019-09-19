@@ -8,6 +8,17 @@ import "./Roles.sol";
 contract AirlineRole {
   using Roles for Roles.Role;
 
+  uint minimumAirlines = 4;                     // number of airlines that can be added without consensus
+
+  struct Airline {
+    address airlineAccount;
+    string companyName;
+    bool isRegistered;
+    bool isFunded;
+    uint256 votes;
+    mapping(address => bool) voters;                    // track airlines that have already voted
+  }
+
   // Define 2 events, one for Adding, and other for Removing
   event AirlineAdded(address indexed account);
   event AirlineRemoved(address indexed account);
@@ -17,7 +28,8 @@ contract AirlineRole {
 
   // In the constructor make the address that deploys this contract the 1st Airline
   constructor() public {
-    _addAirline(msg.sender);
+    // contractOwner = msg.sender;
+    //_addAirline(msg.sender);
   }
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
@@ -32,8 +44,13 @@ contract AirlineRole {
   }
 
   // Define a function 'addAirline' that adds this role
-  function addAirline(address account) public onlyAirline {
-    _addAirline(account);
+  function addAirline(
+      address account,
+      string memory companyName)
+    public
+    onlyAirline
+  {
+    _addAirline(account, companyName);
   }
 
   // Define a function 'renounceAirline' to renounce this role
@@ -42,7 +59,10 @@ contract AirlineRole {
   }
 
   // Define an internal function '_addAirline' to add this role, called by 'addAirline'
-  function _addAirline(address account) internal {
+  function _addAirline(
+      address account,
+      string memory companyName)
+    internal {
     Airlines.add(account);
     emit AirlineAdded(account);
   }

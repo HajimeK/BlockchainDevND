@@ -1,52 +1,56 @@
 @startuml
 
-Class Flight {
-    {field} bool isRegistered;
-    {field} uint8 statusCode;
-    {field} uint256 updatedTimestamp;
-    {field} address airline;
-}
-
-Class Airline {
-    {field} address
-    {field} isApproved
-}
-
-class Passenger {
-    - account
-}
-
-class Flight {
-
-}
-
 class Insurance {
-    bytes32 flightKey;
-    address passenger;
-    uint256 payment;
+    bytes32 flightKey
+    address passenger
+    uint256 payment
 }
 
 class DAppAirline {
-    + setOperational()
+    + airlineStatus
+    --
+    + onLoad()
+    ==
     + registerAirline()
+    + fund()
+    ==
     + registerFlight()
-    + processFlight()
+    + updateFlight()
     + fetchFlighStatus()
 }
 
 class DAppPassenger {
+    + onLoad()
     + purchaseFlightInsurance()
 }
+
+
+
 
 class Oracle {
     + bool isRegistered
     + uint8[3] indexes
-    --
-
+    ==
+    + eventRegiserFlight
+    + queryFlight event
+    + regusterFlight event
+    + eventFlightStatus event
+    + queryPassengersForTheFlight event
+    + eventPaidInsurence(flight) event
+    ==
+    + getFlghtsByAirline(string AilineName) JSON flights struct
+    + getFlghtsByPassenger(string passengerName) JSON flights struct
 }
 
-class FlightSuretyDB {
-
+class FlightSuretyDB <<Database>> {
+    + Flights
+    + Insurance {Passengername, flights, paymentAmount}
+    --
+    + get flighs for the passenger
+    + add flight with unknown status
+    + update Flight status with status code
+    + queryPassengersForTheFlight
+    + mark paid insureance
 }
 
 class ResponseInfo {
@@ -65,39 +69,67 @@ enum FlightStatusCode {
 }
 
 class FlightSuretyApp {
-    - bool private operational = true;
+    - bool private operational = true
+    - enum AirlineStatusCode {REGISTERED, APPROVED, APPROVED_FUNDED, REJECTED}
+    - enum FlightStatusCode
     --
-    - modifier requireIsOperational()
     + function isOperational()
+    + function setOperatingStatus(bool mode ) external requireContractOwne
+    - modifier requireIsOperational()
     - modifier requireContractOwner()
+    - modifier isNewAccount()
+    - modifier isAirline()
+    - modifier isPassenger()
     ==
-    - FlightSuretyData private dataContract;
+    - FlightSuretyData private dataContract
     --
     + constructor (address _dataContractAddress) 
+    + function getAccountType(msg.sender) return uint32
+    + pay(payment amount, passenger)
+    + function creditInsurees()
     ==
-    + function queryAccountType(msg.sender) return uint32
+    + function registerAirline(string memory airlineName) public isNewAccount
+    + function fund() public isAirline payable
+    + function getAirlineStatus() public isAirline return (REGISTERED, APPROVED, APPROVED_FUNDED, REJECTED)
+    + function registerFlight(uint32 flightNumber) public isAirline
+    + function getFlightsByAirline() public isAirline
+    + function fetchFlightStatus (address airline, string flight, uint256 timestamp ) public isAirline
+    + function processFlightStatus(uint32 memory flight, uint256 timestamp, uint8 statusCode ) public isAIrline
+    --
+    + function registerPassenger(string memory name) public isNewAccount
+    + function getFlightsByPassenger() public isPassenger
+    + function buy(uint32 flight)
     ==
-    + function registerAirline()
-    + function registerFlight()
-    + function processFlightStatus(address airline, string memory flight, uint256 timestamp, uint8 statusCode )
-    + function fetchFlightStatus (address airline, string flight, uint256 timestamp )
-    ==
-    - {field} uint8 private nonce = 0;
-    + {field} uint256 public constant REGISTRATION_FEE = 1 ether;
-    - {field} uint256 private constant MIN_RESPONSES = 3;
-    - {field} mapping(address => Oracle) private oracles;
+    - uint8 private nonce = 0;
+    + uint256 public constant REGISTRATION_FEE = 1 ether;
+    - uint256 private constant MIN_RESPONSES = 3;
+    - mapping(address => Oracle) private oracles;
     - mapping(bytes32 => ResponseInfo) private oracleResponses;
     ==
-    event FlightStatusInfo(address airline, string flight, uint256 timestamp, uint8 status);
-    event OracleReport(address airline, string flight, uint256 timestamp, uint8 status);
-    event OracleRequest(uint8 index, address airline, string flight, uint256 timestamp);
+    + event eventGetFlightsByPassenger(address passenger)
+    + event eventGetFlightsByAirline(address airline)
+    + event eventRegisteredAirline(address airline)
+    + event eventApprovedAirline(address airline)
+    + event eventFundedAirline(address airline)
+    --
+    + event eventRegisterFlight(address airline, uint32 flightCode, uint256 timestamp, uint8 status)
+    + event eventGetFlightStatus(address airline, uint32 flightCode, uint256 timestamp)
+    + event eventUpdateFlightStatus(address airline, uint32 flightCode, uint256 timestamp, uint8 status)
+    --
+    + event eventGetFlightPassengers(address passenger)
     ==
-    + function registerOracle ()
-    + function getMyIndexes ()
-    + function submitOracleResponse (uint8 index, address airline, string flight, uint256 timestamp, int8 statusCode )
+    - mapping(address => Oracle) private oracles;
+    - mapping(bytes32 => ResponseInfo) private oracleResponses // hash(flight, index, timestamp)
+    --
+    + function registerOracle() external payable
+    - function getOracleIndexes () private isAirline return(uint)
+    + function listenOracleResponse (uint8 index, address airline, string flight, uint256 timestamp, int8 statusCode )
+    + function listenQueryFlightsResponse(myflights)
     - function getFlightKey (address airline, string flight, uint256 timestamp )
     - function generateIndexes (ddress account )
     - function getRandomIndex (address account )
+    ==
+    + function()
 }
 
 class FlightSuretyData {
@@ -113,38 +145,56 @@ class FlightSuretyData {
     - modifier requireContractOwner()
     ==
     - function isOperational()
-    - function setOperatingStatus()
+    + function setOperatingStatus(bool mode ) external requireContractOwner
     --
     + {method} constructor ()
-    + function registerAirline()
-    + function buy()
-    + function creditInsurees()
-    + function pay()
-    + function fund()
-    - function getFlightKey(
-    + function()
-    ==
-    + function isAirline(account)
-    + function isPassenger(account)
 }
 
 class AirlineRole {
-
+    - Roles.Role private Airlines
+    - mapping(address => bool) private statusFund
+    - mapping(address => (mapping(address => bool))) private approvers
+    ==
+    + event AirlineAdded(address indexed account)
+    - modifier onlyAirline()
+    - modifier onlyApproved()
+    - modifier onlyFunded()
+    ==
+    + constructor() msg.sender
+    + function isAirline(address account) public view returns (bool)
+    + function addAirline(address account) public onlyAirline
+    + function renounceAirline() public
+    - function _addAirline(address account) internal
+    - function _removeAirline(address account) internal
+    ==
+    + function isApproved() public view reutnrs (bool)
+    + function isFunded() public view returns (bool)
 }
 
 class PassengerRole {
-
+    - Roles.Role private Passengers;
+    ==
+    + event PassengerAdded(address indexed account);
+    + event PassengerRemoved(address indexed account);
+    - modifier onlyPassenger() {
+    ==
+    + constructor() msg.sender
+    + function isPassenger(address account) public view returns (bool)
+    + function addPassenger(address account) public onlyAirline
+    + function renouncePassenger() public
+    - function _addPassenger(address account) internal
+    - function _removePassenger(address account) internal
 }
 
-DAppAirline "1" -->  "1" FlightSuretyApp : Utilize >
-DAppPassenger "1" -->  "1" FlightSuretyApp : Utilize >
-FlightSuretyApp "1" --> "1" FlightSuretyData : Persistence >
+DAppAirline "1" -> "1" FlightSuretyApp : Utilize >
+DAppPassenger "1" -> "1" FlightSuretyApp : Utilize >
+FlightSuretyApp "1" ->"1" FlightSuretyData : Persistence >
 FlightSuretyApp "1" --  "1" Oracle : External Service >
 FlightSuretyData "1" o--  "0..*" Airline : Manages >
 FlightSuretyData "1" o--  "0..*" Passenger : Manages >
 AirlineRole <|-- FlightSuretyData
 PassengerRole <|-- FlightSuretyData
-Oracle --> FlightSuretyDB
+Oracle -- FlightSuretyDB
 FlightSuretyDB *-- Insurance
 FlightSuretyDB *-- Flight : Manages >
 (FlightSuretyApp, Oracle) .. ResponseInfo

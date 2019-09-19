@@ -8,6 +8,9 @@ start
 :transferFund;
 |FlightSuretyData|
 :updateAirlline;
+|FlightSuretyApp|
+:registerOracle;
+
 end
 
 @enduml

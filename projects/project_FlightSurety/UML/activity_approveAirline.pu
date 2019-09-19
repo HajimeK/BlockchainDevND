@@ -13,7 +13,7 @@ if (acquired necessary approval) then (yes)
     ->
     |FlightSuretyApp|
     :updateAiline to registered status;
-    #RosyBrown:emit approvedAirline;
+    #ROSYBROWN:emit approvedAirline;
 endif
 end
 @enduml

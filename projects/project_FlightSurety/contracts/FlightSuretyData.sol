@@ -17,17 +17,6 @@ contract FlightSuretyData is AirlineRole, PassengerRole {
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
 
-    uint minimumAirlines = 4;                     // number of airlines that can be added without consensus
-
-
-    struct Airline {
-        address airlineAccount;
-        string companyName;
-        bool isRegistered;
-        bool isFunded;
-        uint256 votes;
-        mapping(address => bool) voters;                    // track airlines that have already voted
-    }
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/

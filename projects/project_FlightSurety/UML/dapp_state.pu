@@ -1,0 +1,20 @@
+@startuml
+[*] --> None : Account not registered
+[*] --> Passenger: Passenger Account
+[*] --> Airline: Airline Account
+
+state None {
+  [*] --> NewAccount
+  NewAccount --> Passenger: Register as a passenger
+  NewAccount --> Airline: Register as an ariline
+}
+
+state Passenger
+
+state Airline {
+    [*] --> AirlineRegistered :Registered
+    [*] --> AirlineApproved :Approved
+    [*] --> AirlineApprovedFunded: Approved and Funded
+    [*] --> AirlineRejected :Rejected
+}
+@enduml

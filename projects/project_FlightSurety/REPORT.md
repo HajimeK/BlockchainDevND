@@ -60,27 +60,53 @@ Deploy the contents of the ./dapp folder
 * [Web3Js Reference](https://github.com/ethereum/wiki/wiki/JavaScript-API)
 
 ## Use Cases
-<img src="../../out/projects/Project_FlightSurety/UML/usecase/usecase.png" alt="Use Case" title="">
+<img src="../../out/projects/project_FlightSurety/UML/usecase/usecase.png" alt="Use Case" title="">
+
+## User Flow (DApp)
+<img src="../../out/projects/project_FlightSurety/UML/dapp_state/dapp_state.png" alt="User Flow" title="">
+
+### The account is not registered
+
+### Passenger account
+#### Flight status
+<img src="../../out/projects/project_FlightSurety/UML/dapp_passengerONTIME/dapp_passengerONTIME.png" alt="On Time" title="">
+
+#### Flight Delayed 
+<img src="../../out/projects/project_FlightSurety/UML/dapp_passengerLATEAIRLINE/dapp_passengerLATEAIRLINE.png" alt="Late" title="">
+
+### Airline account
+
+#### Registered
+<img src="../../out/projects/project_FlightSurety/UML/dapp_airlineRegistered/dapp_airlineRegistered.png" alt="Late" title="">
+
+#### Approved
+<img src="../../out/projects/project_FlightSurety/UML/dapp_airlineApproved/dapp_airlineApproved.png" alt="Late" title="">
+
+#### Approved and Funded
+<img src="../../out/projects/project_FlightSurety/UML/dapp_airlineApprovedFunded/dapp_airlineApprovedFunded.png" alt="Late" title="">
+
+#### Rejected
+NA
 
 ## Class Diagram
-<img src="../../out/projects/Project_FlightSurety/UML/class/class.png">
+<img src="../../out/projects/project_FlightSurety/UML/class/class.png">
 
 ## Operation Design
 
 ### Initial DApp Web Page
-<img src="../../out/projects/Project_FlightSurety/UML/seq_loadPage/seq_loadPage.png">
+<img src="../../out/projects/project_FlightSurety/UML/seq_loadPage/seq_loadPage.png">
 
 ### Register Airline
-<img src="../../out/projects/Project_FlightSurety/UML/seq_registerAirline/seq_registerAirline.png">
+The process is described in the sequence of load page.
 
 ### Approve Airline
-<img src="../../out/projects/Project_FlightSurety/UML/seq_approveAirline/seq_approveAirline.png">
+<img src="../../out/projects/project_FlightSurety/UML/seq_approveAirline/seq_approveAirline.png">
 
 ### register Flight
-<img src="../../out/projects/Project_FlightSurety/UML/seq_registerFlight/seq_registerFlight.png">
+<img src="../../out/projects/project_FlightSurety/UML/seq_registerFlight/seq_registerFlight.png">
 
 ### Buy Insurance
-<img src="../../out/projects/Project_FlightSurety/UML/seq_buyInsurance/seq_buyInsurance.png">
+<img src="../../out/projects/project_FlightSurety/UML/seq_buyInsurance/seq_buyInsurance.png">
 
 ### Update Flight Status
-<img src="../../out/projects/Project_FlightSurety/UML/seq_updateFlightStatus/seq_updateFlightStatus.png">
+<img src="../../out/projects/project_FlightSurety/UML/seq_updateFlightStatus/seq_updateFlightStatus.png">
