@@ -68,8 +68,11 @@ Deploy the contents of the ./dapp folder
 ### The account is not registered
 
 ### Passenger account
-#### Flight status
+#### Passenger
 <img src="../../out/projects/project_FlightSurety/UML/dapp_passengerONTIME/dapp_passengerONTIME.png" alt="On Time" title="">
+
+#### Passenger
+<img src="../../out/projects/project_FlightSurety/UML/dapp_passengerLATEAIRLINE/dapp_passengerLATEAIRLINE.png" alt="On Time" title="">
 
 #### Flight Delayed 
 <img src="../../out/projects/project_FlightSurety/UML/dapp_passengerLATEAIRLINE/dapp_passengerLATEAIRLINE.png" alt="Late" title="">

@@ -24,9 +24,6 @@ class DAppPassenger {
     + purchaseFlightInsurance()
 }
 
-
-
-
 class Oracle {
     + bool isRegistered
     + uint8[3] indexes
@@ -74,21 +71,20 @@ class FlightSuretyApp {
     - enum FlightStatusCode
     --
     + function isOperational()
-    + function setOperatingStatus(bool mode ) external requireContractOwne
+    + function setOperational(bool mode ) external requireContractOwne
     - modifier requireIsOperational()
     - modifier requireContractOwner()
-    - modifier isNewAccount()
-    - modifier isAirline()
-    - modifier isPassenger()
+    - modifier onlyNewAccount()
+    - modifier onlyAirline()
+    - modifier onlyPassenger()
     ==
-    - FlightSuretyData private dataContract
+    - FlightSuretyData private flightSuretyData
     --
-    + constructor (address _dataContractAddress) 
+    + constructor (address _dataContractAddress)
     + function getAccountType(msg.sender) return uint32
-    + pay(payment amount, passenger)
-    + function creditInsurees()
     ==
-    + function registerAirline(string memory airlineName) public isNewAccount
+    + function registerAirline(string memory airlineName) public onlyNewAccount
+    + function approveAirline(string memory airlineName) public onlyAirline
     + function fund() public isAirline payable
     + function getAirlineStatus() public isAirline return (REGISTERED, APPROVED, APPROVED_FUNDED, REJECTED)
     + function registerFlight(uint32 flightNumber) public isAirline
@@ -99,6 +95,11 @@ class FlightSuretyApp {
     + function registerPassenger(string memory name) public isNewAccount
     + function getFlightsByPassenger() public isPassenger
     + function buy(uint32 flight)
+    --
+    + pay(payment amount, passenger)
+    + function creditInsurees()
+    --
+    + withdraw(uint256 amount) public payable onlyContractOwner
     ==
     - uint8 private nonce = 0;
     + uint256 public constant REGISTRATION_FEE = 1 ether;
@@ -106,25 +107,26 @@ class FlightSuretyApp {
     - mapping(address => Oracle) private oracles;
     - mapping(bytes32 => ResponseInfo) private oracleResponses;
     ==
-    + event eventGetFlightsByPassenger(address passenger)
-    + event eventGetFlightsByAirline(address airline)
     + event eventRegisteredAirline(address airline)
     + event eventApprovedAirline(address airline)
     + event eventFundedAirline(address airline)
     --
-    + event eventRegisterFlight(address airline, uint32 flightCode, uint256 timestamp, uint8 status)
-    + event eventGetFlightStatus(address airline, uint32 flightCode, uint256 timestamp)
+    + event eventRegisterFlight(address airline, string flight, uint256 timestamp, uint8 status)
+    + event eventGetFlightsByPassenger(address passenger)
+    + event eventGetFlightsByAirline(address airline)
+    + event eventGetFlightStatus(address airline, uint32 flight, uint256 timestamp)
     + event eventUpdateFlightStatus(address airline, uint32 flightCode, uint256 timestamp, uint8 status)
+    ==
+    +function callbackGetFlightsByPassenger(address passenger)
+    +function callbackGetFlightsByAirline(address airline)
     --
-    + event eventGetFlightPassengers(address passenger)
+    +function callbackGetFlightStatus(address airline, uint32 flightCode, uint256 timestamp)
     ==
     - mapping(address => Oracle) private oracles;
     - mapping(bytes32 => ResponseInfo) private oracleResponses // hash(flight, index, timestamp)
     --
     + function registerOracle() external payable
     - function getOracleIndexes () private isAirline return(uint)
-    + function listenOracleResponse (uint8 index, address airline, string flight, uint256 timestamp, int8 statusCode )
-    + function listenQueryFlightsResponse(myflights)
     - function getFlightKey (address airline, string flight, uint256 timestamp )
     - function generateIndexes (ddress account )
     - function getRandomIndex (address account )
@@ -137,9 +139,6 @@ class FlightSuretyData {
         note right Account used to deploy contract
     - bool private operational = true
         note right Blocks all state changes throughout the contract if false
-    - mapping(bytes32 => Airline) private airlines
-    - const uint minimumAirlines = 4
-    - address[] multiCalls = new address[](0)
     ==
     - modifier requireIsOperational()
     - modifier requireContractOwner()
@@ -150,10 +149,8 @@ class FlightSuretyData {
     + {method} constructor ()
 }
 
-class AirlineRole {
-    - Roles.Role private Airlines
-    - mapping(address => bool) private statusFund
-    - mapping(address => (mapping(address => bool))) private approvers
+class AirlineData {
+    - mapping(address => Airline) private airlines;
     ==
     + event AirlineAdded(address indexed account)
     - modifier onlyAirline()
@@ -171,8 +168,8 @@ class AirlineRole {
     + function isFunded() public view returns (bool)
 }
 
-class PassengerRole {
-    - Roles.Role private Passengers;
+class PassengerData {
+    - mapping(address => Passenger) private passengers;
     ==
     + event PassengerAdded(address indexed account);
     + event PassengerRemoved(address indexed account);
@@ -190,8 +187,6 @@ DAppAirline "1" -> "1" FlightSuretyApp : Utilize >
 DAppPassenger "1" -> "1" FlightSuretyApp : Utilize >
 FlightSuretyApp "1" ->"1" FlightSuretyData : Persistence >
 FlightSuretyApp "1" --  "1" Oracle : External Service >
-FlightSuretyData "1" o--  "0..*" Airline : Manages >
-FlightSuretyData "1" o--  "0..*" Passenger : Manages >
 AirlineRole <|-- FlightSuretyData
 PassengerRole <|-- FlightSuretyData
 Oracle -- FlightSuretyDB

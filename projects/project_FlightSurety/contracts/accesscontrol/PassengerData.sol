@@ -1,39 +1,35 @@
 //pragma solidity ^0.4.24;
 pragma solidity >=0.4.21 <0.6.0;
 
-// Import the library 'Roles'
-import "./Roles.sol";
-
 // Define a contract 'PassengerRole' to manage this role - add, remove, check
-contract PassengerRole {
-  using Roles for Roles.Role;
+contract PassengerData {
+  struct Passenger {
+    string name;
+  }
+  mapping(address => Passenger) private passengers;
 
   // Define 2 events, one for Adding, and other for Removing
   event PassengerAdded(address indexed account);
   event PassengerRemoved(address indexed account);
 
-  // Define a struct 'Passengers' by inheriting from 'Roles' library, struct Role
-  Roles.Role private Passengers;
-
-  // In the constructor make the address that deploys this contract the 1st Passenger
-  constructor() public {
-    _addPassenger(msg.sender);
-  }
+  // constructor() public {
+  //   ;
+  // }
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
-  modifier onlyPassenger() {
-    require(isPassenger(msg.sender));
+  modifier onlyPassenger(address account) {
+    require(isPassenger(account));
     _;
   }
 
   // Define a function 'isPassenger' to check this role
   function isPassenger(address account) public view returns (bool) {
-    return Passengers.has(account);
+    return (bytes(passengers[account].name).length != 0);
   }
 
   // Define a function 'addPassenger' that adds this role
-  function addPassenger(address account) public onlyPassenger {
-    _addPassenger(account);
+  function addPassenger(address account, string calldata name) external {
+    _addPassenger(account, name);
   }
 
   // Define a function 'renouncePassenger' to renounce this role
@@ -42,14 +38,14 @@ contract PassengerRole {
   }
 
   // Define an internal function '_addPassenger' to add this role, called by 'addPassenger'
-  function _addPassenger(address account) internal {
-    Passengers.add(account);
+  function _addPassenger(address account, string memory name) private {
+    passengers[account].name = name;
     emit PassengerAdded(account);
   }
 
   // Define an internal function '_removePassenger' to remove this role, called by 'removePassenger'
-  function _removePassenger(address account) internal {
-    Passengers.remove(account);
+  function _removePassenger(address account) private {
+    delete passengers[account];
     emit PassengerRemoved(account);
   }
 }

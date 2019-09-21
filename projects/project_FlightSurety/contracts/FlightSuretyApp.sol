@@ -7,6 +7,7 @@ pragma solidity >=0.4.25 <0.6.0;
 // More info: https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2018/november/smart-contract-insecurity-bad-arithmetic/
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "./FlightSuretyData.sol";
 
 /************************************************** */
 /* FlightSurety Smart Contract                      */
@@ -18,6 +19,11 @@ contract FlightSuretyApp {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
+    // Airline Registration Status Code
+    uint8 private constant STATUS_CODE_REGISTERED = 0;
+    uint8 private constant STATUS_CODE_APPROVED = 10;
+    uint8 private constant STATUS_CODE_APPROVED_FUNDED = 20;
+    uint8 private constant STATUS_CODE_REJECTED = 99;
     // Flight status codees
     uint8 private constant STATUS_CODE_UNKNOWN = 0;
     uint8 private constant STATUS_CODE_ON_TIME = 10;
@@ -25,20 +31,28 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_WEATHER = 30;
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
+    // Account Type
+    uint8 private constant TYPE_UNDEFINED = 0;
+    uint8 private constant TYPE_AIRPLANE = 10;
+    uint8 private constant TYPE_PASSENGER = 20;
 
     address private contractOwner;          // Account used to deploy contract
+    FlightSuretyData private flightSuretyData;
+    bool private operational = true;
 
-    struct Insurance {
-        bytes32 flightKey;
-        address passenger;
-        uint256 payment;
-    }
+    /********************************************************************************************/
+    /*                                            EVENTS                                        */
+    /********************************************************************************************/
+    event eventRegisteredAirline(address airline);
+    event eventApprovedAirline(address airline);
+    event eventFundedAirline(address airline);
 
-    struct Flight {
-        address airline;
-        uint256 departureTimestamp;
-        uint8 statusCode;
-    }
+    event eventRegisterFlight(address airline, string flight, uint256 timestamp, uint8 status);
+    event eventGetFlightsByPassenger(address passenger);
+    event eventGetFlightsByAirline(address airline);
+    event eventGetFlightStatus(address airline, string flight, uint256 timestamp);
+    event eventUpdateFlightStatus(address airline, string flight, uint256 timestamp, uint8 status);
+
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -55,7 +69,7 @@ contract FlightSuretyApp {
     modifier requireIsOperational() 
     {
          // Modify to call data contract's status
-        require(true, "Contract is currently not operational");  
+        require(operational, "Contract is currently not operational");  
         _;  // All modifiers require an "_" which indicates where the function body will be added
     }
 
@@ -66,6 +80,52 @@ contract FlightSuretyApp {
     {
         require(msg.sender == contractOwner, "Caller is not contract owner");
         _;
+    }
+
+    modifier enoughFundAmount() { 
+        require(msg.value >= 10 ether, 'Not enough fund amount. Should be larger then 10 ether'); 
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires the the account is not registered yet
+    */
+    modifier onlyNewAccount(address account) {
+        require(!(_isAirline(account) || _isPassenger(account)), "This account is already registered.");
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires the  account is airline
+    */
+    modifier onlyAirline(address account) {
+        require(_isAirline(account), "This account is not an airplane account.");
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires the account is passenger
+    */
+    modifier onlyPassenger(address account) {
+        require(_isPassenger(account), "This account is not an passenger account.");
+        _;
+    }
+
+    function _isAirline(address account) private returns (bool) {
+        return flightSuretyData.isAirline(account);
+    }
+    function _isPassenger(address account) private returns (bool) {
+        return flightSuretyData.isPassenger(account);
+    }
+
+    function getAccountType() public returns (uint8) {
+        if(_isAirline(msg.sender)) {
+            return TYPE_AIRPLANE;
+        } else if (_isPassenger(msg.sender)) {
+            return TYPE_PASSENGER;
+        } else {
+            return TYPE_UNDEFINED;
+        }
     }
 
     /********************************************************************************************/
@@ -79,6 +139,7 @@ contract FlightSuretyApp {
     constructor () public
     {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(msg.sender);
     }
 
     /********************************************************************************************/
@@ -87,10 +148,19 @@ contract FlightSuretyApp {
 
     function isOperational()
         public
-        pure
+        view
         returns(bool)
     {
-        return true;  // Modify to call data contract's status
+        return operational && flightSuretyData.isOperational();  // Modify to call data contract's status
+    }
+
+    function setOperatingStatus(
+            bool mode )
+        external
+        requireContractOwner {
+
+        flightSuretyData.setOperational(mode);
+        operational = mode;
     }
 
     /********************************************************************************************/
@@ -101,25 +171,85 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */
-    function registerAirline()
+    function registerAirline(string calldata name)
         external
-        pure
-        returns(bool success, uint256 votes)
-    {
-        return (success, 0);
+        onlyNewAccount(msg.sender) {
+
+        flightSuretyData.addAirline(msg.sender, name);
+        emit eventRegisteredAirline(msg.sender);
     }
 
+    function approveAirline(address airlineAccount)
+        external
+        onlyAirline(msg.sender) {
+        flightSuretyData.approveAirline(airlineAccount, msg.sender);
+        emit eventApprovedAirline(airlineAccount);
+    }
+
+    function fund()
+        external
+        payable
+        requireIsOperational
+        onlyAirline(msg.sender)
+        enoughFundAmount { // check if got enough fund or not
+        flightSuretyData.funded(msg.sender);
+        emit eventFundedAirline(msg.sender);
+    }
+
+    function getAirlineStatus()
+        external
+        requireIsOperational
+        onlyAirline(msg.sender)
+        returns (uint8) {
+
+        if(flightSuretyData.isFunded(msg.sender)) {
+            return STATUS_CODE_APPROVED_FUNDED;
+        } else if(flightSuretyData.isApproved(msg.sender)) {
+            return STATUS_CODE_APPROVED;
+        } else {
+            return STATUS_CODE_REGISTERED;
+        }  // rejection is out of scope
+    }
 
    /**
     * @dev Register a future flight for insuring.
     *
     */
-    function registerFlight()
+    function registerFlight(string calldata flight, uint256 timestamp)
         external
-        pure
-    {
-
+        requireIsOperational
+        onlyAirline {
+        emit eventRegisterFlight(msg.sender, flight, timestamp, STATUS_CODE_UNKNOWN);
     }
+
+    // @todo Reconsider if querying with address is good  or not
+    function getFlightsByPassenger(address passenger)
+        external
+        requireIsOperational {
+        emit eventGetFlightsByPassenger(passenger);
+    }
+
+    // @todo Reconsider if querying with address is good  or not
+    function getFlightsByAirline(address airline)
+        external
+        requireIsOperational {
+        emit eventGetFlightsByAirline(airline);
+    }
+
+    function fetchFlightStatus (address airline, string calldata flight, uint256 timestamp )
+        external
+        requireIsOperational {
+        emit eventGetFlightStatus(airline, flight, timestamp);
+    }
+
+    // @todo avoid other airlines to update the flight. Maybe better use /api in the oracle server
+    function processFlightStatus(string calldata flight, uint256 timestamp, uint8 statusCode )
+        external
+        requireIsOperational
+        onlyAirline {
+        emit eventUpdateFlightStatus(msg.sender, flight, timestamp, statusCode);
+    }
+
 
    /**
     * @dev Called after oracle has updated flight status
