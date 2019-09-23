@@ -12,6 +12,7 @@ contract AirlineData {
   }
   mapping(address => Airline) private airlines;
   mapping(address => mapping(address => bool)) approved;
+  mapping(string => address) airlineByName;
 
   uint private entries = 0;
   uint constant private minimumAirlines = 4;                     // number of airlines that can be added without consensus
@@ -97,6 +98,7 @@ contract AirlineData {
     entries++;
     airlines[account] = Airline({name : name, isApproved : false, isFunded : false, numOfApprovers : 0});
     airlines[account].isApproved = _approvable(airlines[account]); // onlyt true when _lessThanMinimum() is true
+    airlineByName[name] = account;
 
     emit AirlineAdded(account);
   }
@@ -107,6 +109,14 @@ contract AirlineData {
     entries--;
 
     emit AirlineRemoved(account);
+  }
+
+  function getAirline(string calldata name)
+    external
+    view
+    returns (address)
+  {
+    return airlineByName[name];
   }
 
   function _lessThanMinimum()

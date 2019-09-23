@@ -36,6 +36,9 @@ contract FlightSuretyApp {
     uint8 private constant TYPE_AIRPLANE = 10;
     uint8 private constant TYPE_PASSENGER = 20;
 
+    uint256 private constant CREDIT_RATE = 15;
+    uint256 private constant DIV_RATE = 10;
+
     address private contractOwner;          // Account used to deploy contract
     FlightSuretyData private flightSuretyData;
     bool private operational = true;
@@ -48,10 +51,7 @@ contract FlightSuretyApp {
     event eventFundedAirline(address airline);
 
     event eventRegisterFlight(address airline, string flight, uint256 timestamp, uint8 status);
-    event eventGetFlightsByPassenger(address passenger);
-    event eventGetFlightsByAirline(address airline);
-    event eventGetFlightStatus(address airline, string flight, uint256 timestamp);
-    event eventUpdateFlightStatus(address airline, string flight, uint256 timestamp, uint8 status);
+    event eventUpdateFlightStatus(address airline, string flight, uint8 status);
 
 
     /********************************************************************************************/
@@ -63,13 +63,13 @@ contract FlightSuretyApp {
 
     /**
     * @dev Modifier that requires the "operational" boolean variable to be "true"
-    *      This is used on all state changing functions to pause the contract in 
+    *      This is used on all state changing functions to pause the contract in
     *      the event there is an issue that needs to be fixed
     */
-    modifier requireIsOperational() 
+    modifier requireIsOperational()
     {
          // Modify to call data contract's status
-        require(operational, "Contract is currently not operational");  
+        require(operational, "Contract is currently not operational");
         _;  // All modifiers require an "_" which indicates where the function body will be added
     }
 
@@ -82,8 +82,8 @@ contract FlightSuretyApp {
         _;
     }
 
-    modifier enoughFundAmount() { 
-        require(msg.value >= 10 ether, 'Not enough fund amount. Should be larger then 10 ether'); 
+    modifier enoughFundAmount() {
+        require(msg.value >= 10 ether, 'Not enough fund amount. Should be larger then 10 ether');
         _;
     }
 
@@ -173,7 +173,8 @@ contract FlightSuretyApp {
     */
     function registerAirline(string calldata name)
         external
-        onlyNewAccount(msg.sender) {
+        onlyNewAccount(msg.sender)
+    {
 
         flightSuretyData.addAirline(msg.sender, name);
         emit eventRegisteredAirline(msg.sender);
@@ -181,7 +182,8 @@ contract FlightSuretyApp {
 
     function approveAirline(address airlineAccount)
         external
-        onlyAirline(msg.sender) {
+        onlyAirline(msg.sender)
+    {
         flightSuretyData.approveAirline(airlineAccount, msg.sender);
         emit eventApprovedAirline(airlineAccount);
     }
@@ -191,9 +193,31 @@ contract FlightSuretyApp {
         payable
         requireIsOperational
         onlyAirline(msg.sender)
-        enoughFundAmount { // check if got enough fund or not
+        enoughFundAmount
+    { // check if got enough fund or not
         flightSuretyData.funded(msg.sender);
         emit eventFundedAirline(msg.sender);
+    }
+
+    function buy(
+            string calldata airlineName,
+            string calldata flightName,
+            uint256 timestamp,
+            string calldata passengerName)
+        external
+        payable
+        requireIsOperational
+        onlyPassenger(msg.sender)
+    {
+        bytes32 insuranceId = keccak256(
+            abi.encodePacked(
+                getFlightKey(
+                    flightSuretyData.getAirline(airlineName),
+                    flightName,
+                    timestamp),
+                flightSuretyData.getPassenger(passengerName)));
+        uint256 amountCreditedToPassenger = msg.value.mul(CREDIT_RATE).div(DIV_RATE);
+        flightSuretyData.insurance(insuranceId, amountCreditedToPassenger);
     }
 
     function getAirlineStatus()
@@ -218,36 +242,41 @@ contract FlightSuretyApp {
     function registerFlight(string calldata flight, uint256 timestamp)
         external
         requireIsOperational
-        onlyAirline {
+        onlyAirline(msg.sender)
+    {
         emit eventRegisterFlight(msg.sender, flight, timestamp, STATUS_CODE_UNKNOWN);
     }
 
-    // @todo Reconsider if querying with address is good  or not
-    function getFlightsByPassenger(address passenger)
-        external
-        requireIsOperational {
-        emit eventGetFlightsByPassenger(passenger);
-    }
+    // // @todo Reconsider if querying with address is good  or not
+    // function getFlightsByPassenger(address passenger)
+    //     external
+    //     requireIsOperational
+    // {
 
-    // @todo Reconsider if querying with address is good  or not
-    function getFlightsByAirline(address airline)
-        external
-        requireIsOperational {
-        emit eventGetFlightsByAirline(airline);
-    }
+    // }
 
-    function fetchFlightStatus (address airline, string calldata flight, uint256 timestamp )
-        external
-        requireIsOperational {
-        emit eventGetFlightStatus(airline, flight, timestamp);
-    }
+    // // @todo Reconsider if querying with address is good  or not
+    // function getFlightsByAirline(address airline)
+    //     external
+    //     requireIsOperational
+    // {
+
+    // }
+
+    // function getFlightStatus (address airline, string calldata flight, uint256 timestamp )
+    //     external
+    //     requireIsOperational
+    // {
+
+    // }
 
     // @todo avoid other airlines to update the flight. Maybe better use /api in the oracle server
-    function processFlightStatus(string calldata flight, uint256 timestamp, uint8 statusCode )
+    function updateFlightStatus(string calldata flight, uint8 statusCode )
         external
         requireIsOperational
-        onlyAirline {
-        emit eventUpdateFlightStatus(msg.sender, flight, timestamp, statusCode);
+        onlyAirline(msg.sender)
+    {
+        emit eventUpdateFlightStatus(msg.sender, flight, statusCode);
     }
 
 
@@ -255,18 +284,29 @@ contract FlightSuretyApp {
     * @dev Called after oracle has updated flight status
     *
     */
-    function processFlightStatus(
-            address airline,
-            string memory flight,
+    function listenFlightStatuUpdatesUpdate(
+            string calldata airlineName,
+            string calldata flightName,
             uint256 timestamp,
+            string calldata passengerName,
             uint8 statusCode)
-        internal
-        pure
+        external
+        requireIsOperational
     {
+        //bytes32 insuranceId;
+        if( STATUS_CODE_LATE_AIRLINE == statusCode ){
+            bytes32 insuranceId = keccak256(
+                abi.encodePacked(
+                    getFlightKey(
+                        flightSuretyData.getAirline(airlineName),
+                        flightName,
+                        timestamp),
+                    flightSuretyData.getPassenger(passengerName)));
+            flightSuretyData.issuePayment(passengerName, insuranceId);
+        }
     }
 
 
-    // Generate a request for oracles to fetch flight information
     function fetchFlightStatus(
             address airline,
             string calldata flight,
@@ -300,7 +340,7 @@ contract FlightSuretyApp {
 
     struct Oracle {
         bool isRegistered;
-        uint8[3] indexes;        
+        uint8[3] indexes;
     }
 
     // Track all registered oracles
@@ -345,8 +385,8 @@ contract FlightSuretyApp {
     }
 
     function getMyIndexes()
-        view
         external
+        view
         returns(uint8[3] memory)
     {
         require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
@@ -383,7 +423,7 @@ contract FlightSuretyApp {
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
-            processFlightStatus(airline, flight, timestamp, statusCode);
+            //processFlightStatus(airline, flight, timestamp, statusCode);
         }
     }
 

@@ -16,6 +16,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
 
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+    mapping(bytes32 => uint256) private insurances;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -29,6 +30,23 @@ contract FlightSuretyData is AirlineData, PassengerData {
         public
     {
         contractOwner = msg.sender;
+    }
+
+    function insurance(bytes32 insuranceID,uint256 payamount)
+        external
+        requireIsOperational
+        requireContractOwner
+    {
+        insurances[insuranceID] = payamount;
+    }
+
+    function issuePayment(string calldata passengerName, bytes32 insuranceID)
+        external
+        requireIsOperational
+        requireContractOwner
+    {
+        require(address(this).balance >= insurances[insuranceID], "No enough balance amount");
+        pay(passengerName, insurances[insuranceID]);
     }
 
     /********************************************************************************************/

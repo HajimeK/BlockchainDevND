@@ -112,15 +112,12 @@ class FlightSuretyApp {
     + event eventFundedAirline(address airline)
     --
     + event eventRegisterFlight(address airline, string flight, uint256 timestamp, uint8 status)
-    + event eventGetFlightsByPassenger(address passenger)
-    + event eventGetFlightsByAirline(address airline)
-    + event eventGetFlightStatus(address airline, uint32 flight, uint256 timestamp)
     + event eventUpdateFlightStatus(address airline, uint32 flightCode, uint256 timestamp, uint8 status)
     ==
     +function callbackGetFlightsByPassenger(address passenger)
     +function callbackGetFlightsByAirline(address airline)
     --
-    +function callbackGetFlightStatus(address airline, uint32 flightCode, uint256 timestamp)
+    + function listenFlightStatuUpdatesUpdate(string calldata airlineName, string calldata flightName, uint256 timestamp, string calldata passengerName, uint8 statusCode)
     ==
     - mapping(address => Oracle) private oracles;
     - mapping(bytes32 => ResponseInfo) private oracleResponses // hash(flight, index, timestamp)

@@ -27,7 +27,6 @@ let db = new sqlite3.Database(':memory:', (err) => {
 //   }
 // );
 
-
 flightSuretyApp.events.eventGetFlightsByPassenger(
   {fromBlock: 0},
   function (error, event) {
@@ -38,35 +37,6 @@ flightSuretyApp.events.eventGetFlightsByPassenger(
   }
 );
 
-flightSuretyApp.events.eventGetFlightsByAirline(
-  {fromBlock: 0}, 
-  function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
-  }
-);
-
-flightSuretyApp.events.eventRegisteredAirline({
-  fromBlock: 0
-}, function (error, event) {
-  if (error) console.log(error)
-  console.log(event)
-});
-flightSuretyApp.events.eventApprovedAirline(
-  {fromBlock: 0}, 
-  function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
-  }
-);
-
-flightSuretyApp.events.eventFundedAirline({
-  fromBlock: 0
-}, function (error, event) {
-  if (error) console.log(error)
-  console.log(event)
-});
-
 flightSuretyApp.events.eventRegisterFlight({
   fromBlock: 0
 }, function (error, event) {
@@ -74,24 +44,9 @@ flightSuretyApp.events.eventRegisterFlight({
   console.log(event)
 });
 
-flightSuretyApp.events.eventGetFlightStatus(
-  {fromBlock: 0}, 
-  function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
-  }
-);
 
 flightSuretyApp.events.eventUpdateFlightStatus(
-  {fromBlock: 0}, 
-  function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
-  }
-);
-
-flightSuretyApp.events.eventGetFlightPassengers(
-  {fromBlock: 0}, 
+  {fromBlock: 0},
   function (error, event) {
     if (error) console.log(error)
     console.log(event)
@@ -103,6 +58,32 @@ app.get('/api', (req, res) => {
     res.send({
       message: 'An API for use with your Dapp!'
     })
+})
+
+
+//+ event eventGetFlightsByPassenger(address passenger)
+app.get('/api/GetFlightsByPassenger', (req, res) => {
+  console.log(req.query.passenger);
+  res.send({
+    message: 'An API for use with your Dapp!'
+  })
+})
+
+//+ event eventGetFlightsByAirline(address airline)
+app.get('/api/GetFlightsByAirline', (req, res) => {
+  console.log(req.query.airline);
+  res.send({
+    message: 'An API for use with your Dapp!'
+  })
+})
+
+//+ event eventGetFlightStatus(address airline, uint32 flight, uint256 timestamp)
+app.get('/api/GetFlightStatus', (req, res) => {
+  console.log(req.query.airline);
+  console.log(req.query.flight);
+  res.send({
+    message: 'An API for use with your Dapp!'
+  })
 })
 
 export default app;
