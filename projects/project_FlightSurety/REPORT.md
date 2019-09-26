@@ -96,20 +96,5 @@ NA
 
 ## Operation Design
 
-### Initial DApp Web Page
+### Sequence
 <img src="../../out/projects/project_FlightSurety/UML/seq_loadPage/seq_loadPage.png">
-
-### Register Airline
-The process is described in the sequence of load page.
-
-### Approve Airline
-<img src="../../out/projects/project_FlightSurety/UML/seq_approveAirline/seq_approveAirline.png">
-
-### register Flight
-<img src="../../out/projects/project_FlightSurety/UML/seq_registerFlight/seq_registerFlight.png">
-
-### Buy Insurance
-<img src="../../out/projects/project_FlightSurety/UML/seq_buyInsurance/seq_buyInsurance.png">
-
-### Update Flight Status
-<img src="../../out/projects/project_FlightSurety/UML/seq_updateFlightStatus/seq_updateFlightStatus.png">

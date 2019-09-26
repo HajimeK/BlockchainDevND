@@ -140,6 +140,7 @@ contract FlightSuretyApp {
     {
         contractOwner = msg.sender;
         flightSuretyData = FlightSuretyData(msg.sender);
+        flightSuretyData.addAirline(msg.sender, "DEFAULT");
     }
 
     /********************************************************************************************/
@@ -185,7 +186,8 @@ contract FlightSuretyApp {
     {
         flightSuretyData.approveAirline(airlineAccount, msg.sender);
         if ( flightSuretyData.isApproved(airlineAccount)) {
-            emit eventApprovedAirline(getRandomIndex(airlineAccount), airlineAccount);        }
+            emit eventApprovedAirline(getRandomIndex(airlineAccount), airlineAccount);
+        }
     }
 
     function fund()
@@ -310,7 +312,6 @@ contract FlightSuretyApp {
             string calldata airlineName,
             string calldata flightName,
             uint256 timestamp,
-            string calldata passengerName,
             uint8 statusCode)
         external
         requireIsOperational
@@ -322,11 +323,7 @@ contract FlightSuretyApp {
         require(flightProvider[flightKey] == updater, "Airlines can only update its flight.");
         //bytes32 insuranceId;
         if( STATUS_CODE_LATE_AIRLINE == statusCode ){
-            bytes32 insuranceId = keccak256(
-                abi.encodePacked(
-                    flightKey,
-                    flightSuretyData.getPassenger(passengerName)));
-            flightSuretyData.addPayment(passengerName, insuranceId);
+            flightSuretyData.addPayment(flightKey);
         }
     }
 
@@ -348,6 +345,17 @@ contract FlightSuretyApp {
     //     emit OracleRequest(index, airline, flight, timestamp);
     // }
 
+   /**
+    * @dev Add a passenger to the registration queue
+    *
+    */
+    function registerPassenger(string calldata name)
+        external
+        onlyNewAccount(msg.sender)
+    {
+        flightSuretyData.addPassenger(msg.sender, name);
+        //emit eventRegisteredAirline(msg.sender);
+    }
 
 // region ORACLE MANAGEMENT
 
@@ -435,6 +443,7 @@ contract FlightSuretyApp {
             uint256 timestamp,
             uint8 statusCode                        )
         external
+        requireIsOperational
     {
         require((oracles[msg.sender].indexes[0] == index)
          || (oracles[msg.sender].indexes[1] == index)
@@ -464,37 +473,6 @@ contract FlightSuretyApp {
         //    processFlightStatus(airline, flight, timestamp, statusCode);
         }
     }
-
-
-   /**
-    * @dev Called after oracle has updated flight status
-    *
-    */
-    function listenFlightStatuUpdatesUpdate(
-            address updater,
-            string calldata airlineName,
-            string calldata flightName,
-            uint256 timestamp,
-            string calldata passengerName,
-            uint8 statusCode)
-        external
-        requireIsOperational
-    {
-        bytes32 flightKey =  getFlightKey(
-                                flightSuretyData.getAirline(airlineName),
-                                flightName,
-                                timestamp);
-        require(flightProvider[flightKey] == updater, "Airlines can only update its flight.");
-        //bytes32 insuranceId;
-        if( STATUS_CODE_LATE_AIRLINE == statusCode ){
-            bytes32 insuranceId = keccak256(
-                abi.encodePacked(
-                    flightKey,
-                    flightSuretyData.getPassenger(passengerName)));
-            flightSuretyData.addPayment(passengerName, insuranceId);
-        }
-    }
-
 
     function getFlightKey(
             address airline,

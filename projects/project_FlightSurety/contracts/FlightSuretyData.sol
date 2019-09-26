@@ -33,7 +33,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
         contractOwner = msg.sender;
     }
 
-    function insurance(bytes32 flightID, string calldata insurancee, uint256 payamount)
+    function insurance(bytes32 flightKey, string calldata insurancee, uint256 payamount)
         external
         requireIsOperational
         requireContractOwner
@@ -43,22 +43,22 @@ contract FlightSuretyData is AirlineData, PassengerData {
                         flightKey,
                         insurancee));
         insurances[insuranceId] = payamount;
-        flightInsurancees[flightID].push(insurancee);
+        flightInsurancees[flightKey].push(insurancee);
     }
 
-    function addPayment(bytes32 flightKey, bytes32 insurnceID)
+    function addPayment(bytes32 flightKey)
         external
         requireIsOperational
         requireContractOwner
     {
-        require(address(this).balance >= insurances[insuranceID], "No enough balance amount");
-        address[] storage paids = flightInsurancees[flightKey];
+        string[] storage paids = flightInsurancees[flightKey];
         for(uint8 i = 0; i < paids.length; i++) {
-            bytes32 insuranceId = keccak256(
+            bytes32 insuranceID = keccak256(
                     abi.encodePacked(
                         flightKey,
                         getPassenger(paids[i])));
             pay(paids[i], insurances[insuranceID]);
+        }
     }
 
     /********************************************************************************************/

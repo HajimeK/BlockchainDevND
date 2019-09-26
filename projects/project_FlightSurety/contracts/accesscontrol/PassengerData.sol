@@ -72,7 +72,6 @@ contract PassengerData {
     address payable passenger = passengerByName[passengerName];
     uint256 currentAmount = withdrawable[passenger];
     withdrawable[passenger] = currentAmount.add(payment);
-
   }
 
   function withdraw(address payable passenger, uint256 amount)

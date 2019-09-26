@@ -9,8 +9,7 @@ database FlightSuretyDB
 
 autonumber "<b>[000]"
 Passenger -> DApp : request buy a flight insurance
-DApp -> FlightSuretyApp : purchaseFlightInsurance(account, payment, ailine, flight, timestamp)
-FlightSuretyApp -> FlightSuretyData: call.buy.valu(payment)(msg.sender, airline, flight, timestamp)
-FlightSuretyApp -> Oracle : emit eventPurchasedFlightInsurance
-Oracle -> FlightSuretyDB : add to the the flight, insurance passenger pair.
+DApp -> FlightSuretyApp : buy(string calldata airlineName,string calldata flightName,uint256 timestamp,string calldata passengerName)
+FlightSuretyApp -> FlightSuretyData: insurance
+FlightSuretyData -> FlightSuretyData : update insurace list (by passenger, by flight)
 @enduml

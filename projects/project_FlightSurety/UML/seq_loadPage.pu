@@ -73,14 +73,30 @@ else Account Type is Airline
         FlightSuretyApp -> Oracle : emit regiserFlight
         ...
         Oracle -> FlightSuretyDB : add flight with unknown status
+            note right
+                not implemented this time
+            end note
         == update flight status ==
-
         Airline -> DApp : update flight status
         DApp -> FlightSuretyApp : updateFlightStatus(msg.sender, flight states)
         FlightSuretyApp -> Oracle: emit eventFlightStatusUpdate
         ...
         Oracle -> FlightSuretyDB: update Flight status with status code
+            note right
+                not implemented this time
+            end note
         Oracle -> FlightSuretyApp: call listenFlightStatusChange
+            note right
+                not implemented this time
+                Instead
+            end note
+        Oracle -> FlightSuretyApp: submitOracleResponse(uint8 index, address airline, string calldata flight, uint256 timestamp, uint8 statusCode)
+            note right
+                Update the flight status randomly just for simulation purpose in this project.
+            end note
+            note right
+                STATUS_CODE_LATE_AIRLINE
+            end note
         alt STATUS_CODE_UNKNOWN = 0
             note over FlightSuretyApp
                 TBD
@@ -89,7 +105,15 @@ else Account Type is Airline
             note over FlightSuretyApp
                 TBD
             end note
-        else STATUS_COName: PlantUML Previewer
+        else STATUS_CODE_LATE_AIRLINE
+            FlightSuretyApp -> FlightSuretyData : credit to passengers.
+            ...
+            Passenger -> DApp: withdraw
+            DApp -> FlightSuretyApp: withdraw(uint256 amount)
+            FlightSuretyApp -> FlightSuretyData: withdraw(passenger, amount)
+            note right
+                Followings are Future Idea
+            end note
             FlightSuretyApp -> Oracle: emit queryPassengersForTheFlight
             ...
             Oracle -> FlightSuretyDB : query queryPassengersForTheFlight
