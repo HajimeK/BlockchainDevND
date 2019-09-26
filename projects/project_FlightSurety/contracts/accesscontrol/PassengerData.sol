@@ -1,13 +1,17 @@
 //pragma solidity ^0.4.24;
 pragma solidity >=0.4.21 <0.6.0;
 
+import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 // Define a contract 'PassengerRole' to manage this role - add, remove, check
 contract PassengerData {
+  using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
   struct Passenger {
     string name;
   }
   mapping(address => Passenger) private passengers;
   mapping(string => address payable) private passengerByName;
+  mapping(address => uint) private withdrawable;
 
   // Define 2 events, one for Adding, and other for Removing
   event PassengerAdded(address indexed account);
@@ -42,6 +46,7 @@ contract PassengerData {
   function _addPassenger(address payable account, string memory name) private {
     passengers[account].name = name;
     passengerByName[name] = account;
+    withdrawable[account] = 0;
     emit PassengerAdded(account);
   }
 
@@ -60,12 +65,24 @@ contract PassengerData {
     return passengerByName[name];
   }
 
-  function pay(string memory passengerName, uint payment)
+  function pay(string memory passengerName, uint256 payment)
     internal
     onlyPassenger(passengerByName[passengerName])
   {
     address payable passenger = passengerByName[passengerName];
-    passenger.transfer(payment);
+    uint256 currentAmount = withdrawable[passenger];
+    withdrawable[passenger] = currentAmount.add(payment);
+
+  }
+
+  function withdraw(address payable passenger, uint256 amount)
+    external
+    onlyPassenger(passenger)
+  {
+    uint256 currentAmount = withdrawable[passenger];
+    require(currentAmount >= amount, "Passengers cannot request more than withdrawable amount");
+    withdrawable[passenger] = currentAmount.sub(amount);
+    passenger.transfer(amount);
   }
 
 }

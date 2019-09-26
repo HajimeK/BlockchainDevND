@@ -18,10 +18,10 @@ contract AirlineData {
   uint constant private minimumAirlines = 4;                     // number of airlines that can be added without consensus
 
   // Define 2 events, one for Adding, and other for Removing
-  event AirlineAdded(address indexed account);
-  event AirlineRemoved(address indexed account);
-  event AirlineApproved(address indexed account);
-  event AirlineFunded(address indexed account);
+  //event AirlineAdded(address indexed account);
+  //event AirlineRemoved(address indexed account);
+  //event AirlineApproved(address indexed account);
+  //event AirlineFunded(address indexed account);
 
   // // In the constructor make the address that deploys this contract the 1st Airline
   // constructor() public {
@@ -100,7 +100,7 @@ contract AirlineData {
     airlines[account].isApproved = _approvable(airlines[account]); // onlyt true when _lessThanMinimum() is true
     airlineByName[name] = account;
 
-    emit AirlineAdded(account);
+    //emit AirlineAdded(account);
   }
 
   // Define an internal function '_removeAirline' to remove this role, called by 'removeAirline'
@@ -108,7 +108,7 @@ contract AirlineData {
     delete airlines[account];
     entries--;
 
-    emit AirlineRemoved(account);
+    //emit AirlineRemoved(account);
   }
 
   function getAirline(string calldata name)
@@ -144,7 +144,7 @@ contract AirlineData {
     approved[account][approver] = true;
     if( _approvable(airlines[account])) {
       airlines[account].isApproved = true;
-      emit AirlineApproved(account);
+      //emit AirlineApproved(account);
     }
   }
 
@@ -153,6 +153,6 @@ contract AirlineData {
     onlyAirline(account)
     notYetFunded(account) {
     airlines[account].isFunded = true;
-    emit AirlineFunded(account);
+    //emit AirlineFunded(account);
   }
 }

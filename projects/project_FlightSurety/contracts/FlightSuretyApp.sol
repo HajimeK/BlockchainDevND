@@ -46,12 +46,12 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     /*                                            EVENTS                                        */
     /********************************************************************************************/
-    event eventRegisteredAirline(address airline);
-    event eventApprovedAirline(address airline);
-    event eventFundedAirline(address airline);
+    //event eventRegisteredAirline(address airline);
+    event eventApprovedAirline(uint8 index, address airline);
+    //event eventFundedAirline(address airline);
 
-    event eventRegisterFlight(address airline, string flight, uint256 timestamp, uint8 status);
-    event eventUpdateFlightStatus(address airline, string flight, uint8 status);
+    event eventRegisterFlight(bytes32 flightID);
+    event eventUpdateFlightStatus(address airline, bytes32 flightID, uint8 status);
 
 
     /********************************************************************************************/
@@ -175,9 +175,8 @@ contract FlightSuretyApp {
         external
         onlyNewAccount(msg.sender)
     {
-
         flightSuretyData.addAirline(msg.sender, name);
-        emit eventRegisteredAirline(msg.sender);
+        //emit eventRegisteredAirline(msg.sender);
     }
 
     function approveAirline(address airlineAccount)
@@ -185,7 +184,8 @@ contract FlightSuretyApp {
         onlyAirline(msg.sender)
     {
         flightSuretyData.approveAirline(airlineAccount, msg.sender);
-        emit eventApprovedAirline(airlineAccount);
+        if ( flightSuretyData.isApproved(airlineAccount)) {
+            emit eventApprovedAirline(getRandomIndex(airlineAccount), airlineAccount);        }
     }
 
     function fund()
@@ -196,7 +196,7 @@ contract FlightSuretyApp {
         enoughFundAmount
     { // check if got enough fund or not
         flightSuretyData.funded(msg.sender);
-        emit eventFundedAirline(msg.sender);
+        //emit eventFundedAirline(msg.sender);
     }
 
     function buy(
@@ -209,15 +209,21 @@ contract FlightSuretyApp {
         requireIsOperational
         onlyPassenger(msg.sender)
     {
-        bytes32 insuranceId = keccak256(
-            abi.encodePacked(
-                getFlightKey(
+        bytes32 flightKey = getFlightKey(
                     flightSuretyData.getAirline(airlineName),
                     flightName,
-                    timestamp),
-                flightSuretyData.getPassenger(passengerName)));
+                    timestamp);
         uint256 amountCreditedToPassenger = msg.value.mul(CREDIT_RATE).div(DIV_RATE);
-        flightSuretyData.insurance(insuranceId, amountCreditedToPassenger);
+        flightSuretyData.insurance(flightKey, passengerName, amountCreditedToPassenger);
+    }
+
+    function withdraw(
+            uint256 amount)
+        external
+        requireIsOperational
+        onlyPassenger(msg.sender)
+    {
+        flightSuretyData.withdraw(msg.sender, amount);
     }
 
     function getAirlineStatus()
@@ -235,6 +241,11 @@ contract FlightSuretyApp {
         }  // rejection is out of scope
     }
 
+    mapping(bytes32 => address) private flightProvider;
+    modifier onlyFlightProvider(bytes32 flightKey) {
+        require(msg.sender == flightProvider[flightKey], "Not a flight owner.");
+        _;
+    }
    /**
     * @dev Register a future flight for insuring.
     *
@@ -244,7 +255,12 @@ contract FlightSuretyApp {
         requireIsOperational
         onlyAirline(msg.sender)
     {
-        emit eventRegisterFlight(msg.sender, flight, timestamp, STATUS_CODE_UNKNOWN);
+        bytes32 flightKey = getFlightKey(
+                                msg.sender,
+                                flight,
+                                timestamp);
+        flightProvider[flightKey] = msg.sender;
+        emit eventRegisterFlight(flightKey);
     }
 
     // // @todo Reconsider if querying with address is good  or not
@@ -271,12 +287,17 @@ contract FlightSuretyApp {
     // }
 
     // @todo avoid other airlines to update the flight. Maybe better use /api in the oracle server
-    function updateFlightStatus(string calldata flight, uint8 statusCode )
+    function updateFlightStatus(string calldata flight, uint256 timestamp, uint8 statusCode )
         external
         requireIsOperational
         onlyAirline(msg.sender)
+        onlyFlightProvider(getFlightKey(msg.sender, flight, timestamp))
     {
-        emit eventUpdateFlightStatus(msg.sender, flight, statusCode);
+        bytes32 flightKey = getFlightKey(
+                                msg.sender,
+                                flight,
+                                timestamp);
+        emit eventUpdateFlightStatus(msg.sender, flightKey, statusCode);
     }
 
 
@@ -285,6 +306,7 @@ contract FlightSuretyApp {
     *
     */
     function listenFlightStatuUpdatesUpdate(
+            address updater,
             string calldata airlineName,
             string calldata flightName,
             uint256 timestamp,
@@ -293,37 +315,38 @@ contract FlightSuretyApp {
         external
         requireIsOperational
     {
+        bytes32 flightKey =  getFlightKey(
+                                flightSuretyData.getAirline(airlineName),
+                                flightName,
+                                timestamp);
+        require(flightProvider[flightKey] == updater, "Airlines can only update its flight.");
         //bytes32 insuranceId;
         if( STATUS_CODE_LATE_AIRLINE == statusCode ){
             bytes32 insuranceId = keccak256(
                 abi.encodePacked(
-                    getFlightKey(
-                        flightSuretyData.getAirline(airlineName),
-                        flightName,
-                        timestamp),
+                    flightKey,
                     flightSuretyData.getPassenger(passengerName)));
-            flightSuretyData.issuePayment(passengerName, insuranceId);
+            flightSuretyData.addPayment(passengerName, insuranceId);
         }
     }
 
+    // function fetchFlightStatus(
+    //         address airline,
+    //         string calldata flight,
+    //         uint256 timestamp)
+    //     external
+    // {
+    //     uint8 index = getRandomIndex(msg.sender);
 
-    function fetchFlightStatus(
-            address airline,
-            string calldata flight,
-            uint256 timestamp)
-        external
-    {
-        uint8 index = getRandomIndex(msg.sender);
+    //     // Generate a unique key for storing the request
+    //     bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
+    //     oracleResponses[key] = ResponseInfo({
+    //                                             requester: msg.sender,
+    //                                             isOpen: true
+    //                                         });
 
-        // Generate a unique key for storing the request
-        bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
-        oracleResponses[key] = ResponseInfo({
-                                                requester: msg.sender,
-                                                isOpen: true
-                                            });
-
-        emit OracleRequest(index, airline, flight, timestamp);
-    }
+    //     emit OracleRequest(index, airline, flight, timestamp);
+    // }
 
 
 // region ORACLE MANAGEMENT
@@ -369,7 +392,6 @@ contract FlightSuretyApp {
     // they fetch data and submit a response
     event OracleRequest(uint8 index, address airline, string flight, uint256 timestamp);
 
-
     // Register an oracle with the contract
     function registerOracle ()
         external
@@ -382,6 +404,14 @@ contract FlightSuretyApp {
 
         oracles[msg.sender] = Oracle(
             {isRegistered: true, indexes: indexes});
+    }
+
+    function getRegistrationFee()
+        public
+        pure
+        returns (uint256)
+    {
+        return REGISTRATION_FEE;
     }
 
     function getMyIndexes()
@@ -423,7 +453,45 @@ contract FlightSuretyApp {
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
-            //processFlightStatus(airline, flight, timestamp, statusCode);
+
+            if( STATUS_CODE_LATE_AIRLINE == statusCode ){
+                bytes32 flightKey =  getFlightKey(
+                                airline,
+                                flight,
+                                timestamp);
+                flightSuretyData.addPayment(flightKey);
+            }
+        //    processFlightStatus(airline, flight, timestamp, statusCode);
+        }
+    }
+
+
+   /**
+    * @dev Called after oracle has updated flight status
+    *
+    */
+    function listenFlightStatuUpdatesUpdate(
+            address updater,
+            string calldata airlineName,
+            string calldata flightName,
+            uint256 timestamp,
+            string calldata passengerName,
+            uint8 statusCode)
+        external
+        requireIsOperational
+    {
+        bytes32 flightKey =  getFlightKey(
+                                flightSuretyData.getAirline(airlineName),
+                                flightName,
+                                timestamp);
+        require(flightProvider[flightKey] == updater, "Airlines can only update its flight.");
+        //bytes32 insuranceId;
+        if( STATUS_CODE_LATE_AIRLINE == statusCode ){
+            bytes32 insuranceId = keccak256(
+                abi.encodePacked(
+                    flightKey,
+                    flightSuretyData.getPassenger(passengerName)));
+            flightSuretyData.addPayment(passengerName, insuranceId);
         }
     }
 

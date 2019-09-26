@@ -17,6 +17,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
     mapping(bytes32 => uint256) private insurances;
+    mapping(bytes32 => string[]) private flightInsurancees;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -32,21 +33,32 @@ contract FlightSuretyData is AirlineData, PassengerData {
         contractOwner = msg.sender;
     }
 
-    function insurance(bytes32 insuranceID,uint256 payamount)
+    function insurance(bytes32 flightID, string calldata insurancee, uint256 payamount)
         external
         requireIsOperational
         requireContractOwner
     {
-        insurances[insuranceID] = payamount;
+        bytes32 insuranceId = keccak256(
+                    abi.encodePacked(
+                        flightKey,
+                        insurancee));
+        insurances[insuranceId] = payamount;
+        flightInsurancees[flightID].push(insurancee);
     }
 
-    function issuePayment(string calldata passengerName, bytes32 insuranceID)
+    function addPayment(bytes32 flightKey, bytes32 insurnceID)
         external
         requireIsOperational
         requireContractOwner
     {
         require(address(this).balance >= insurances[insuranceID], "No enough balance amount");
-        pay(passengerName, insurances[insuranceID]);
+        address[] storage paids = flightInsurancees[flightKey];
+        for(uint8 i = 0; i < paids.length; i++) {
+            bytes32 insuranceId = keccak256(
+                    abi.encodePacked(
+                        flightKey,
+                        getPassenger(paids[i])));
+            pay(paids[i], insurances[insuranceID]);
     }
 
     /********************************************************************************************/
@@ -81,7 +93,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
     /********************************************************************************************/
 
     /**
-    * @dev Get operating status of contract
+    * @dev Get operating stadaaaaaaaaaaaatus of contract
     *
     * @return A bool that is the current operating status
     */
