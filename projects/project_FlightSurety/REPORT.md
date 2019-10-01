@@ -66,6 +66,7 @@ Deploy the contents of the ./dapp folder
 <img src="../../out/projects/project_FlightSurety/UML/dapp_state/dapp_state.png" alt="User Flow" title="">
 
 ### The account is not registered
+<img src="../../out/projects/project_FlightSurety/UML/dapp_NoAccountType/dapp_NoAccountType.png" alt="On Time" title="">
 
 ### Passenger account
 #### Passenger
