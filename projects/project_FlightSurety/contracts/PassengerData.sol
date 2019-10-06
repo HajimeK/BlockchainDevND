@@ -1,7 +1,7 @@
 //pragma solidity ^0.4.24;
 pragma solidity >=0.4.21 <0.6.0;
 
-import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 // Define a contract 'PassengerRole' to manage this role - add, remove, check
 contract PassengerData {

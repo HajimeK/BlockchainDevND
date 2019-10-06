@@ -111,14 +111,14 @@ contract FlightSuretyApp {
         _;
     }
 
-    function _isAirline(address account) private returns (bool) {
+    function _isAirline(address account) private view returns (bool) {
         return flightSuretyData.isAirline(account);
     }
-    function _isPassenger(address account) private returns (bool) {
+    function _isPassenger(address account) private view returns (bool) {
         return flightSuretyData.isPassenger(account);
     }
 
-    function getAccountType() public returns (uint8) {
+    function getAccountType() public view returns (uint8) {
         if(_isAirline(msg.sender)) {
             return TYPE_AIRPLANE;
         } else if (_isPassenger(msg.sender)) {
@@ -140,7 +140,7 @@ contract FlightSuretyApp {
     {
         contractOwner = msg.sender;
         flightSuretyData = FlightSuretyData(msg.sender);
-        flightSuretyData.addAirline(msg.sender, "DEFAULT");
+        //flightSuretyData.addAirline(msg.sender, "DEFAULT");
     }
 
     /********************************************************************************************/
@@ -152,7 +152,7 @@ contract FlightSuretyApp {
         view
         returns(bool)
     {
-        return operational && flightSuretyData.isOperational();  // Modify to call data contract's status
+        return operational;// && flightSuretyData.isOperational();  // Modify to call data contract's status
     }
 
     function setOperatingStatus(
@@ -163,6 +163,12 @@ contract FlightSuretyApp {
         flightSuretyData.setOperational(mode);
         operational = mode;
     }
+
+
+    /********************************************************************************************/
+    /*                                       DApps                                  */
+    /********************************************************************************************/
+
 
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
@@ -201,35 +207,10 @@ contract FlightSuretyApp {
         //emit eventFundedAirline(msg.sender);
     }
 
-    function buy(
-            string calldata airlineName,
-            string calldata flightName,
-            uint256 timestamp,
-            string calldata passengerName)
-        external
-        payable
-        requireIsOperational
-        onlyPassenger(msg.sender)
-    {
-        bytes32 flightKey = getFlightKey(
-                    flightSuretyData.getAirline(airlineName),
-                    flightName,
-                    timestamp);
-        uint256 amountCreditedToPassenger = msg.value.mul(CREDIT_RATE).div(DIV_RATE);
-        flightSuretyData.insurance(flightKey, passengerName, amountCreditedToPassenger);
-    }
-
-    function withdraw(
-            uint256 amount)
-        external
-        requireIsOperational
-        onlyPassenger(msg.sender)
-    {
-        flightSuretyData.withdraw(msg.sender, amount);
-    }
 
     function getAirlineStatus()
         external
+        view
         requireIsOperational
         onlyAirline(msg.sender)
         returns (uint8) {
@@ -243,11 +224,9 @@ contract FlightSuretyApp {
         }  // rejection is out of scope
     }
 
-    mapping(bytes32 => address) private flightProvider;
-    modifier onlyFlightProvider(bytes32 flightKey) {
-        require(msg.sender == flightProvider[flightKey], "Not a flight owner.");
-        _;
-    }
+    /**
+        Flight Operation only by Airline
+     */
    /**
     * @dev Register a future flight for insuring.
     *
@@ -265,29 +244,6 @@ contract FlightSuretyApp {
         emit eventRegisterFlight(flightKey);
     }
 
-    // // @todo Reconsider if querying with address is good  or not
-    // function getFlightsByPassenger(address passenger)
-    //     external
-    //     requireIsOperational
-    // {
-
-    // }
-
-    // // @todo Reconsider if querying with address is good  or not
-    // function getFlightsByAirline(address airline)
-    //     external
-    //     requireIsOperational
-    // {
-
-    // }
-
-    // function getFlightStatus (address airline, string calldata flight, uint256 timestamp )
-    //     external
-    //     requireIsOperational
-    // {
-
-    // }
-
     // @todo avoid other airlines to update the flight. Maybe better use /api in the oracle server
     function updateFlightStatus(string calldata flight, uint256 timestamp, uint8 statusCode )
         external
@@ -300,6 +256,14 @@ contract FlightSuretyApp {
                                 flight,
                                 timestamp);
         emit eventUpdateFlightStatus(msg.sender, flightKey, statusCode);
+    }
+
+    // From FlightKey to airline address
+    mapping(bytes32 => address) private flightProvider;
+    // Only the flight provider can operate on the flight of the airline.
+    modifier onlyFlightProvider(bytes32 flightKey) {
+        require(msg.sender == flightProvider[flightKey], "Not a flight operator.");
+        _;
     }
 
 
@@ -316,7 +280,7 @@ contract FlightSuretyApp {
         external
         requireIsOperational
     {
-        bytes32 flightKey =  getFlightKey(
+        bytes32 flightKey = getFlightKey(
                                 flightSuretyData.getAirline(airlineName),
                                 flightName,
                                 timestamp);
@@ -356,6 +320,34 @@ contract FlightSuretyApp {
         flightSuretyData.addPassenger(msg.sender, name);
         //emit eventRegisteredAirline(msg.sender);
     }
+
+    function buy(
+            string calldata airlineName,
+            string calldata flightName,
+            uint256 timestamp,
+            string calldata passengerName)
+        external
+        payable
+        requireIsOperational
+        onlyPassenger(msg.sender)
+    {
+        bytes32 flightKey = getFlightKey(
+                    flightSuretyData.getAirline(airlineName),
+                    flightName,
+                    timestamp);
+        uint256 amountCreditedToPassenger = msg.value.mul(CREDIT_RATE).div(DIV_RATE);
+        flightSuretyData.insurance(flightKey, passengerName, amountCreditedToPassenger);
+    }
+
+    function withdraw(
+            uint256 amount)
+        external
+        requireIsOperational
+        onlyPassenger(msg.sender)
+    {
+        flightSuretyData.withdraw(msg.sender, amount);
+    }
+
 
 // region ORACLE MANAGEMENT
 
@@ -464,7 +456,7 @@ contract FlightSuretyApp {
             // Handle flight status as appropriate
 
             if( STATUS_CODE_LATE_AIRLINE == statusCode ){
-                bytes32 flightKey =  getFlightKey(
+                bytes32 flightKey = getFlightKey(
                                 airline,
                                 flight,
                                 timestamp);

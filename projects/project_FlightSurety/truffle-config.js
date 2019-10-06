@@ -54,10 +54,14 @@ module.exports = {
     // },
   
     develop: {
+      host: "127.0.0.1",
       port: 8545,
       accounts: 20,
-      defaultEtherBalance: 500,
-      blockTime: 3
+      from: "0xd63378790242a416e309e76fe8f96b2e2f06c6f1"
+      //defaultEtherBalance: 500,
+      //blockTime: 3,
+      // gas: 6700000,
+      //gasPrice: 10000000000
     }
     //Rinkeby: {
     //  provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),

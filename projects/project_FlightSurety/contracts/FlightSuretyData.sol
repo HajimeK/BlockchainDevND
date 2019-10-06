@@ -3,8 +3,8 @@ pragma solidity >=0.4.21 <0.6.0;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-import "./accesscontrol/AirlineData.sol";
-import "./accesscontrol/PassengerData.sol";
+import "./AirlineData.sol";
+import "./PassengerData.sol";
 
 
 contract FlightSuretyData is AirlineData, PassengerData {

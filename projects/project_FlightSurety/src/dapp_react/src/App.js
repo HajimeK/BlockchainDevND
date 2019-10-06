@@ -65,6 +65,14 @@ export default class App extends React.Component {
     this.handleBuyInsurance = this.handleBuyInsurance.bind(this);
   }
 
+  getAccountType() {
+    let self = this;
+    let account = this.web3.eth.accounts[0];
+    return self.flightSuretyApp.methods
+      .getAccountType()
+      .call({ from: account });
+  }
+
   isOperational() {
     let self = this;
     return self.flightSuretyApp.methods
@@ -162,6 +170,7 @@ export default class App extends React.Component {
   }
 
   Passenger() {
+    console.log(this.getAccountType())
     return (
 
       <div>

@@ -8,7 +8,6 @@ let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
 web3.eth.defaultAccount = web3.eth.accounts[0];
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-let db_connection = None;
 
 const STATUS_CODE_UNKNOWN = 0
 const STATUS_CODE_ON_TIME = 10
@@ -61,7 +60,7 @@ flightSuretyApp.events.eventRegisterFlight({
 
 flightSuretyApp.events.eventApprovedAirline({
   fromBlock: 0
-}, function (error, event) {
+}, async function (error, event) {
   if (error) console.log(error)
   else {
     console.log(event)
