@@ -36,7 +36,9 @@ var Config = async function(accounts) {
     //let flightSuretyData = await FlightSuretyData.new({from: owner});
     //let flightSuretyApp = await FlightSuretyApp.new({from: owner});
     //let flightSuretyData = await FlightSuretyData.deployed(); // instantiated inside fligtSruretyApp
-    let flightSuretyApp = await FlightSuretyApp.deployed();
+    let flightSuretyApp = await FlightSuretyApp.new({from:owner});
+    //pass arguement to flight surety app constructor
+    //address of data contract
 
     
     return {

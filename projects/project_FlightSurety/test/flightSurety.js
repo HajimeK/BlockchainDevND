@@ -48,41 +48,80 @@ contract('Flight Surety Tests', async (accounts) => {
     //     assert.equal(accessPermitted, true, "Access not restricted for Contract Owner");
     // });
 
-    it(`(multiparty) has correct initial isOperational() value`, async function () {
+    it(`(operation) has correct initial isOperational() value`, async function () {
         // Get operating status
         let status = await config.flightSuretyApp.isOperational();
         assert.equal(status, true, "Incorrect initial operating status value");
     });
 
-    it(`(multiparty) can allow access to setOperatingStatus() for Contract Owner account`, async function () {
+    it(`(operation) setOperatingStatus() to false`, async function () {
         // Ensure that access is allowed for Contract Owner account
         let accessDenied = false;
         try {
-            await config.setOperatingStatus(false, { from: config.testAddresses[0] });
+            await config.flightSuretyApp.setOperatingStatus(false);
         } catch (e) {
             accessDenied = true;
         }
         assert.equal(accessDenied, false, "Access restricted even for the Contract Owner");
+        let status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, false, "Incorrect operating status value");
     });
 
-    it(`(multiparty) can block access to functions using requireIsOperational when operating status is false`, async function () {
-        await config.flightSuretyApp.setOperatingStatus(false);
-
-        let reverted = false;
+    it(`(operation) setOperatingStatus() to true`, async function () {
+        // Ensure that access is allowed for Contract Owner account
+        let accessDenied = true;
         try {
-            await config.flightSurety.setTestingMode(true);
+            await config.flightSuretyApp.setOperatingStatus(true);
         } catch (e) {
-            reverted = true;
+            accessDenied = false;
         }
-        assert.equal(reverted, true, "Access not blocked for requireIsOperational");
-        // Set it back for other tests to work
-        await config.flightSuretyApp.setOperatingStatus(true);
+        assert.equal(accessDenied, true, "Access restricted even for the Contract Owner");
+        let status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, true, "Incorrect operating status value");
+    });
+
+    it(`(operation) can block access to functions using requireIsOperational when operating status is false`, async function () {
+        // Ensure that access is allowed for Contract Owner account
+        let accessDenied = false;
+        try {
+            await config.flightSuretyApp.setOperatingStatus(false, { from: config.testAddresses[5] });
+        } catch (e) {
+            accessDenied = true;
+        }
+        assert.equal(accessDenied, true, "Access not restricted even for the Contract Owner");
+    });
+
+    it(`(airline) registerAirline for initial airplane`, async function () {
+        // Get operating status
+        let type = 90;
+        let status = 90;
+        let a = await config.flightSuretyApp.datacontract();
+        console.log(a);
+        try {
+            await config.flightSuretyApp.registerAirline('airline10', { from: config.testAddresses[10] })
+            console.log(await config.flightSuretyApp.getAccountType());
+            type = await config.flightSuretyApp.getAccountType({ from: config.testAddresses[10] });
+            status = config.flightSuretyApp.getAirlineStatus();
+        } catch (e) {
+            console.log(e);
+            type = 99;
+            status = 99;
+        }
+        assert.equal(result, 10, "not TYPE_AIRLINE");
+        assert.equal(status, 10, "not STATUS_CODE_APPROVED");
+    });
+
+    it(`(airline) isApproved for initial airplane`, async function () {
+        // Get operating status
+        let status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, true, "Incorrect initial operating status value");
     });
 
     it('(airline) Primary contract account is the airline', async () => {
-        let result = await config.flightSuretyApp.isAirline(config.testAddresses[0]);
+        let result = await config.flightSuretyApp.getAccountType(config.testAddresses[0]);
         // ASSERT
-        assert.equal(result, true, "Primary contract should be registered as an ailine");
+        console.log(result);
+        assert.equal(result, TYPE_AIRPLANE, "Primary contract should be registered as an ailine");
     });
 
     it(`(multiparty) has correct initial isOperational() value`, async function () {
@@ -96,7 +135,7 @@ contract('Flight Surety Tests', async (accounts) => {
         let isAirline = false;
         try {
             await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] });
-            console.log(config.testAddresses[0]);
+
             isAirline = await config.flightSuretyApp.isAirline(config.testAddresses[0]);
             isAirline = ! await config.flightSuretyApp.isApproved('airline0', { from: config.testAddresses[0] });
         } catch (e) {
@@ -115,7 +154,6 @@ contract('Flight Surety Tests', async (accounts) => {
         let status = true;
 
         try {
-            isApproved0 = config.flightSuretyApp.isApproved('DEFAULT', { from: config.testAddresses[0] });
             await config.flightSuretyApp.registerAirline('airline1', { from: config.testAddresses[1] })
             isApproved1 = config.flightSuretyApp.isApproved('airline1', { from: config.testAddresses[0] });
             await config.flightSuretyApp.registerAirline('airline2', { from: config.testAddresses[2] })

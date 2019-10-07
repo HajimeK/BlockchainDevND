@@ -33,13 +33,13 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
     // Account Type
     uint8 private constant TYPE_UNDEFINED = 0;
-    uint8 private constant TYPE_AIRPLANE = 10;
+    uint8 private constant TYPE_AIRLINE = 10;
     uint8 private constant TYPE_PASSENGER = 20;
 
     uint256 private constant CREDIT_RATE = 15;
     uint256 private constant DIV_RATE = 10;
 
-    address private contractOwner;          // Account used to deploy contract
+    address payable private contractOwner;          // Account used to deploy contract
     FlightSuretyData private flightSuretyData;
     bool private operational = true;
 
@@ -120,7 +120,7 @@ contract FlightSuretyApp {
 
     function getAccountType() public view returns (uint8) {
         if(_isAirline(msg.sender)) {
-            return TYPE_AIRPLANE;
+            return TYPE_AIRLINE;
         } else if (_isPassenger(msg.sender)) {
             return TYPE_PASSENGER;
         } else {
@@ -139,8 +139,12 @@ contract FlightSuretyApp {
     constructor () public
     {
         contractOwner = msg.sender;
-        flightSuretyData = FlightSuretyData(msg.sender);
+        flightSuretyData = FlightSuretyData(contractOwner);
         //flightSuretyData.addAirline(msg.sender, "DEFAULT");
+    }
+
+    function datacontract() public returns (bool) {
+        return flightSuretyData.isOperational();
     }
 
     /********************************************************************************************/
@@ -160,7 +164,7 @@ contract FlightSuretyApp {
         external
         requireContractOwner {
 
-        flightSuretyData.setOperational(mode);
+        //flightSuretyData.setOperational(mode);
         operational = mode;
     }
 
