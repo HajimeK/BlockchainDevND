@@ -5,7 +5,7 @@ var BigNumber = require('bignumber.js');
 contract('Flight Surety Tests', async (accounts) => {
 
     var config;
-    beforeEach('setup contract', async () => {
+    before('setup contract', async () => {
         config = await Test.Config(accounts);
     });
 
