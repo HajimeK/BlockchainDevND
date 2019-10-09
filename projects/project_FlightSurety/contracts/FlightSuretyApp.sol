@@ -139,12 +139,7 @@ contract FlightSuretyApp {
     constructor () public
     {
         contractOwner = msg.sender;
-        flightSuretyData = FlightSuretyData(contractOwner);
-        //flightSuretyData.addAirline(msg.sender, "DEFAULT");
-    }
-
-    function datacontract() public returns (bool) {
-        return flightSuretyData.isOperational();
+        flightSuretyData = new FlightSuretyData(msg.sender);
     }
 
     /********************************************************************************************/

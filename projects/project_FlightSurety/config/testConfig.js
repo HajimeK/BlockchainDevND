@@ -1,5 +1,5 @@
 var FlightSuretyApp = artifacts.require("FlightSuretyApp");
-var FlightSuretyData = artifacts.require("FlightSuretyData");
+//var FlightSuretyData = artifacts.require("FlightSuretyData");
 var BigNumber = require('bignumber.js');
 
 var Config = async function(accounts) {

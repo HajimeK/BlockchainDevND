@@ -95,15 +95,11 @@ contract('Flight Surety Tests', async (accounts) => {
         // Get operating status
         let type = 90;
         let status = 90;
-        let a = await config.flightSuretyApp.datacontract();
-        console.log(a);
         try {
             await config.flightSuretyApp.registerAirline('airline10', { from: config.testAddresses[10] })
-            console.log(await config.flightSuretyApp.getAccountType());
             type = await config.flightSuretyApp.getAccountType({ from: config.testAddresses[10] });
             status = config.flightSuretyApp.getAirlineStatus();
         } catch (e) {
-            console.log(e);
             type = 99;
             status = 99;
         }
