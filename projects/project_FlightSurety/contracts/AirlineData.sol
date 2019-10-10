@@ -71,7 +71,7 @@ contract AirlineData {
 
   // Define a function 'isAirline' to check this role
   function isAirline(address account) public view returns (bool) {
-    return (bytes(airlines[account].name).length != 0);
+    return (bytes(airlines[account].name).length > 0);
   }
 
   // Define a function 'addAirline' that adds this role

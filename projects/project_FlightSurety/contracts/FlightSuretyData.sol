@@ -30,7 +30,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
     constructor (address _owner)
         public
     {
-        contractOwner =_owner;
+        contractOwner = _owner;
     }
 
     function insurance(bytes32 flightKey, string calldata insurancee, uint256 payamount)

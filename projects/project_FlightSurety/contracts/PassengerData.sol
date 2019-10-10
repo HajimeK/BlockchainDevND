@@ -14,8 +14,8 @@ contract PassengerData {
   mapping(address => uint) private withdrawable;
 
   // Define 2 events, one for Adding, and other for Removing
-  event PassengerAdded(address indexed account);
-  event PassengerRemoved(address indexed account);
+  //event PassengerAdded(address indexed account);
+  //event PassengerRemoved(address indexed account);
 
   // constructor() public {
   //   ;
@@ -29,7 +29,7 @@ contract PassengerData {
 
   // Define a function 'isPassenger' to check this role
   function isPassenger(address account) public view returns (bool) {
-    return (bytes(passengers[account].name).length != 0);
+    return (bytes(passengers[account].name).length > 0);
   }
 
   // Define a function 'addPassenger' that adds this role
@@ -47,14 +47,13 @@ contract PassengerData {
     passengers[account].name = name;
     passengerByName[name] = account;
     withdrawable[account] = 0;
-    emit PassengerAdded(account);
   }
 
   // Define an internal function '_removePassenger' to remove this role, called by 'removePassenger'
   function _removePassenger(address account) private {
     delete passengerByName[passengers[account].name];
     delete passengers[account];
-    emit PassengerRemoved(account);
+    //emit PassengerRemoved(account);
   }
 
   function getPassenger(string memory name)

@@ -118,10 +118,15 @@ contract FlightSuretyApp {
         return flightSuretyData.isPassenger(account);
     }
 
-    function getAccountType() public view returns (uint8) {
-        if(_isAirline(msg.sender)) {
+    function getAccountType(address _account)
+        external
+        view
+        requireIsOperational
+        returns (uint8)
+    {
+        if(_isAirline(_account)) {
             return TYPE_AIRLINE;
-        } else if (_isPassenger(msg.sender)) {
+        } else if (_isPassenger(_account)) {
             return TYPE_PASSENGER;
         } else {
             return TYPE_UNDEFINED;
@@ -203,20 +208,20 @@ contract FlightSuretyApp {
         enoughFundAmount
     { // check if got enough fund or not
         flightSuretyData.funded(msg.sender);
-        //emit eventFundedAirline(msg.sender);
+        // eventFundedAirline(msg.sender);
     }
 
 
-    function getAirlineStatus()
+    function getAirlineStatus(address _account)
         external
         view
         requireIsOperational
-        onlyAirline(msg.sender)
+        onlyAirline(_account)
         returns (uint8) {
 
-        if(flightSuretyData.isFunded(msg.sender)) {
+        if(flightSuretyData.isFunded(_account)) {
             return STATUS_CODE_APPROVED_FUNDED;
-        } else if(flightSuretyData.isApproved(msg.sender)) {
+        } else if(flightSuretyData.isApproved(_account)) {
             return STATUS_CODE_APPROVED;
         } else {
             return STATUS_CODE_REGISTERED;
