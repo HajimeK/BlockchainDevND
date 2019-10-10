@@ -93,9 +93,10 @@ flightSuretyApp.events.eventApprovedAirline({
   }
 });
 
-(getRandomIndex(airlineAccount), airlineAccount)
+//(getRandomIndex(airlineAccount), airlineAccount)
 
-flightSuretyApp.events.eventUpdateFlightStatus(
+//flightSuretyApp.events.eventUpdateFlightStatus(
+flightSuretyApp.events.OracleRequest(
   {fromBlock: 0},
   function (error, event) {
     if (error) console.log(error)

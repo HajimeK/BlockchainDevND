@@ -137,11 +137,9 @@ contract('Flight Surety Tests', async (accounts) => {
 
     it(`(passenger) is Passenger`, async function () {
         let type = 90;
-        console.log(config.testAddresses[11]);
         await config.flightSuretyApp.registerPassenger('passenger1', { from: config.testAddresses[11] });
         try {
             type = await config.flightSuretyApp.getAccountType(config.testAddresses[11]);
-            console.log(type);
         } catch (e) {
             type = 99;
         }
