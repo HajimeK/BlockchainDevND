@@ -9,13 +9,22 @@ module.exports = {
   },
   module: {
     rules: [
-    {
+      {
         test: /\.(js|jsx)$/,
         use: {
           loader: 'babel-loader',
           options: {
             babelrc: false,
-            presets: ['es2017', 'react', 'stage-0']
+            presets: [
+              [
+                "@babel/preset-env", {
+                  "targets": {
+                    "node": "current"
+                  }
+                }
+              ],
+              "@babel/preset-react"
+            ]
           }
         },
         exclude: /node_modules/
@@ -38,7 +47,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({ 
+    new HtmlWebpackPlugin({
       template: path.join(__dirname, "src/dapp/public/index.html")
     })
   ],
