@@ -6,7 +6,7 @@ const StartServerPlugin = require('start-server-webpack-plugin')
 module.exports = {
     entry: [
         'webpack/hot/poll?1000',
-        './src/server/index'
+        path.join(__dirname, './src/server/index')
     ],
     watch: true,
     target: 'node',
@@ -14,12 +14,40 @@ module.exports = {
         whitelist: ['webpack/hot/poll?1000']
     })],
     module: {
-        rules: [{
-            test: /\.js?$/,
-            use: 'babel-loader',
-            exclude: /node_modules/
-        }]
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        babelrc: false,
+                        presets: [
+                            "@babel/preset-env",
+                            "@babel/preset-react",
+                            "@babel/preset-stage-0",
+                        ]
+                    }
+                },
+                exclude: /node_modules/
+            },
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    'file-loader'
+                ]
+            },
+            {
+                test: /\.html$/,
+                use: "html-loader",
+                exclude: /node_modules/
+            }
+        ]
     },
+
     plugins: [
         new StartServerPlugin('server.js'),
         new webpack.NamedModulesPlugin(),

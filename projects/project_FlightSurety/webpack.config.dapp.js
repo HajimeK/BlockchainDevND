@@ -2,16 +2,22 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: ['babel-polyfill', path.join(__dirname, "src/dapp")],
+  entry: ['babel-polyfill', path.join(__dirname, "src/dapp/src")],
   output: {
-    path: path.join(__dirname, "prod/dapp"),
+    path: path.join(__dirname, "prod/dapp/src"),
     filename: "bundle.js"
   },
   module: {
     rules: [
     {
         test: /\.(js|jsx)$/,
-        use: "babel-loader",
+        use: {
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            presets: ['es2017', 'react', 'stage-0']
+          }
+        },
         exclude: /node_modules/
       },
       {
@@ -33,7 +39,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({ 
-      template: path.join(__dirname, "src/dapp/index.html")
+      template: path.join(__dirname, "src/dapp/public/index.html")
     })
   ],
   resolve: {
