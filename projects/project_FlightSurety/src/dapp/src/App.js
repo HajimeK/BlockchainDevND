@@ -1,11 +1,5 @@
 import React from 'react';
-import logo from './flight.jpg';
-import './App.css';
-import './flightsurety.css';
-import Contract from './contract';
-import FlightSuretyApp from './smartcontracts/FlightSuretyApp';
-import Config from './config.json';
-import Web3 from 'web3';
+
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -15,6 +9,16 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
+
+import Web3 from 'web3';
+
+import logo from './flight.jpg';
+import './App.css';
+import './flightsurety.css';
+import Contract from './contract';
+import FlightSuretyApp from './smartcontracts/FlightSuretyApp.json';
+import Config from './config.json';
+
 
 const useStyles = makeStyles(theme => ({
   root: {

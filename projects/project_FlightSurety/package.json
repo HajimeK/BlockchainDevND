@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
     "typeface-roboto": "0.0.75",
     "yargs": "^14.2.0"
   },

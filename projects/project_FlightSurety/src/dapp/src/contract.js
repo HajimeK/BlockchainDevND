@@ -1,6 +1,7 @@
-import FlightSuretyApp from './smartcontracts/FlightSuretyApp';
-import Config from './config.json';
 import Web3 from 'web3';
+import FlightSuretyApp from './smartcontracts/FlightSuretyApp.json';
+import Config from './config.json';
+
 
 export default class Contract {
     //    constructor(network, callback) {
