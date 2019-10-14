@@ -9,6 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 
 import Web3 from 'web3';
 
@@ -33,8 +34,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
 }));
-
-
 
 export default class App extends React.Component {
 
@@ -69,12 +68,13 @@ export default class App extends React.Component {
     this.handleBuyInsurance = this.handleBuyInsurance.bind(this);
   }
 
-  getAccountType() {
+  getAccountType = async() => {
     let self = this;
-    let account = this.web3.eth.accounts[0];
+    let account = self.web3.eth.accounts[0];
+    console.log(account);
+    console.log(self.web3.eth.getBalance(account));
     return self.flightSuretyApp.methods
-      .getAccountType()
-      .call({ from: account });
+      .getAccountType(account, { from: account });
   }
 
   isOperational() {
@@ -109,131 +109,153 @@ export default class App extends React.Component {
 
       <div>
         <form autoComplete="off">
-          <TextField
-            id="flight-status"
-            label="Flight Status"
-            value={this.props.approvalStatus}
-            margin="normal"
-          />
-          <FormControl>
-            <InputLabel htmlFor="airline-list">Waiting for approval</InputLabel>
-            <Select
-              value={this.props.airline}
-              onChange={this.handleChange}
-              inputProps={{ name: 'airline', id: 'airline-list', }}>
-              <MenuItem value={10}>JAL</MenuItem>
-              <MenuItem value={20}>ANA</MenuItem>
-              <MenuItem value={30}>AA</MenuItem>
-            </Select>
-            <Button variant="contained" onClick={this.handleApprove} color="primary">Approve</Button>
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="fund-amount">Fund</InputLabel>
-            <Input
-              id="fund-amount"
-              value={this.props.fundAmount}
-              aria-describedby="fund-amount-text"
-            />
-            <FormHelperText id="fund-amount-text">Fund more than 1 ether</FormHelperText>
-            <Button variant="contained" onClick={this.handleFund} color="primary">Fund</Button>
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="new-flight">Register Flight</InputLabel>
-            <Input
-              id="new-flight"
-              value={this.props.newFlight}
-              aria-describedby="new-flight-text"
-            />
-            <FormHelperText id="new-flight-text">Register flight</FormHelperText>
-            <Button variant="contained" onClick={this.handleNewFlight} color="primary">Fund</Button>
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="flight-status">Flight Status</InputLabel>
-            <Select
-              value={this.props.flight}
-              inputProps={{ name: 'flight', id: 'flight-list', }}>
-              <MenuItem value={10}>001</MenuItem>
-              <MenuItem value={20}>002</MenuItem>
-              <MenuItem value={30}>003</MenuItem>
-            </Select>
-            <Select
-              value={this.props.status}
-              inputProps={{ name: 'status', id: 'status-list', }}>
-              <MenuItem value={0}>UNKNOWN</MenuItem>
-              <MenuItem value={10}>ON TIME</MenuItem>
-              <MenuItem value={20}>LATE AIRLINE</MenuItem>
-              <MenuItem value={30}>LATE WEATHER</MenuItem>
-              <MenuItem value={40}>LATE TECHNICAL</MenuItem>
-              <MenuItem value={50}>LATE OTHER</MenuItem>
-            </Select>
-            <Button variant="contained" onClick={this.handleFlightStatus} color="primary">Flight Status Update</Button>
-          </FormControl>
+          <Grid container direction='column'>
+            <Grid item>
+              <FormControl>
+                <InputLabel htmlFor="airline-list">Waiting for approval</InputLabel>
+                <Select
+                  value={this.props.airline}
+                  onChange={this.handleChange}
+                  inputProps={{ name: 'airline', id: 'airline-list', }}>
+                  <MenuItem value={10}>JAL</MenuItem>
+                  <MenuItem value={20}>ANA</MenuItem>
+                  <MenuItem value={30}>AA</MenuItem>
+                </Select>
+                <Button variant="contained" onClick={this.handleApprove} color="primary">Approve</Button>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <InputLabel htmlFor="fund-amount">Fund</InputLabel>
+                <Input
+                  id="fund-amount"
+                  value={this.props.fundAmount}
+                  aria-describedby="fund-amount-text"
+                />
+                <FormHelperText id="fund-amount-text">Fund more than 1 ether</FormHelperText>
+                <Button variant="contained" onClick={this.handleFund} color="primary">Fund</Button>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <InputLabel htmlFor="new-flight">Register Flight</InputLabel>
+                <Input
+                  id="new-flight"
+                  value={this.props.newFlight}
+                  aria-describedby="new-flight-text"
+                />
+                <FormHelperText id="new-flight-text">Register flight</FormHelperText>
+                <Button variant="contained" onClick={this.handleNewFlight} color="primary">Fund</Button>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  id="flight-status"
+                  label="Flight Status"
+                  value={this.props.approvalStatus}
+                  margin="normal"
+                />
+                <InputLabel htmlFor="flight-status">Flight Status</InputLabel>
+                <Select
+                  value={this.props.flight}
+                  inputProps={{ name: 'flight', id: 'flight-list', }}>
+                  <MenuItem value={10}>001</MenuItem>
+                  <MenuItem value={20}>002</MenuItem>
+                  <MenuItem value={30}>003</MenuItem>
+                </Select>
+                <Select
+                  value={this.props.status}
+                  inputProps={{ name: 'status', id: 'status-list', }}>
+                  <MenuItem value={0}>UNKNOWN</MenuItem>
+                  <MenuItem value={10}>ON TIME</MenuItem>
+                  <MenuItem value={20}>LATE AIRLINE</MenuItem>
+                  <MenuItem value={30}>LATE WEATHER</MenuItem>
+                  <MenuItem value={40}>LATE TECHNICAL</MenuItem>
+                  <MenuItem value={50}>LATE OTHER</MenuItem>
+                </Select>
+                <Button variant="contained" onClick={this.handleFlightStatus} color="primary">Flight Status Update</Button>
+              </FormControl>
+            </Grid>
+          </Grid>
         </form>
       </div>
     );
   }
 
   Passenger() {
-    console.log(this.getAccountType())
     return (
 
       <div>
         <form autoComplete="off">
-          <FormControl>
-            <InputLabel htmlFor="airline-list">Airline</InputLabel>
-            <Select
-              width={1 / 5}
-              value={this.props.airline}
-              inputProps={{ name: 'airline', id: 'airline-list', }}>
-              <MenuItem value={10}>JAL</MenuItem>
-              <MenuItem value={20}>ANA</MenuItem>
-              <MenuItem value={30}>AA</MenuItem>
-            </Select>
-          </FormControl>
+          <Grid continer direction='column'>
+            <Grid item>
+              <Grid container direction='row' alignItems='stretch'>
+                <Grid item>
+                  <FormControl>
+                    <InputLabel htmlFor="airline-list">Airline</InputLabel>
+                    <Select
+                      width={1 / 5}
+                      value={this.props.airline}
+                      inputProps={{ name: 'airline', id: 'airline-list', }}>
+                      <MenuItem value={10}>JAL</MenuItem>
+                      <MenuItem value={20}>ANA</MenuItem>
+                      <MenuItem value={30}>AA</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <FormControl>
+                    <InputLabel htmlFor="flight-list">Flight</InputLabel>
+                    <Select
+                      width={1 / 5}
+                      value={this.props.flight}
+                      inputProps={{ name: 'flight', id: 'flight-list', }}>
+                      <MenuItem value={10}>001</MenuItem>
+                      <MenuItem value={20}>002</MenuItem>
+                      <MenuItem value={30}>003</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <TextField
+                    width={1 / 5}
+                    id="flight-status"
+                    label="Flight Status"
+                    value={this.props.flightStatus}
+                    margin="normal"
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <InputLabel htmlFor="component-insuranceAmount">Insurance Amount</InputLabel>
+                <Input
+                  width={1 / 5}
+                  id="component-insuranceAmount"
+                  value={this.props.insuranceAmount}
+                  aria-describedby="component-helper-text"
+                />
+                <FormHelperText id="component-helper-text">Input Insurance Amount</FormHelperText>
+              </FormControl>
 
-          <FormControl>
-            <InputLabel htmlFor="flight-list">Flight</InputLabel>
-            <Select
-              width={1 / 5}
-              value={this.props.flight}
-              inputProps={{ name: 'flight', id: 'flight-list', }}>
-              <MenuItem value={10}>001</MenuItem>
-              <MenuItem value={20}>002</MenuItem>
-              <MenuItem value={30}>003</MenuItem>
-            </Select>
-          </FormControl>
-
-          <TextField
-            width={1 / 5}
-            id="flight-status"
-            label="Flight Status"
-            value={this.props.flightStatus}
-            margin="normal"
-          />
-          <FormControl>
-            <InputLabel htmlFor="component-insuranceAmount">Insurance Amount</InputLabel>
-            <Input
-              width={1 / 5}
-              id="component-insuranceAmount"
-              value={this.props.insuranceAmount}
-              aria-describedby="component-helper-text"
-            />
-            <FormHelperText id="component-helper-text">Input Insurance Amount</FormHelperText>
-          </FormControl>
-
-          <Button
-            width={1 / 5}
-            variant="contained"
-            color="primary"
-            onClick={this.handleBuyInsurance}>
-            Buy Insurance
-                    </Button>
+              <Button
+                width={1 / 5}
+                variant="contained"
+                color="primary"
+                onClick={this.handleBuyInsurance}>
+                Buy Insurance
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </div>
     )
   }
 
   render() {
+    //console.log(this.getAccountType());
     return (
       <div className="App">
         <header className="App-header">
