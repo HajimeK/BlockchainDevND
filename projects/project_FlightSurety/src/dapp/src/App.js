@@ -47,6 +47,9 @@ export default class App extends React.Component {
       this.owner = accts[0];
     })
     this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+    console.log('getaccounttype');
+    console.log(this.flightSuretyApp.methods.getAccountType.call(this.owner, {from:this.owner}));
+    console.log('getaccounttype');
     this.airlines = [];
     this.passengers = [];
     //this.classes = useStyles();
@@ -68,11 +71,11 @@ export default class App extends React.Component {
     this.handleBuyInsurance = this.handleBuyInsurance.bind(this);
   }
 
-  getAccountType = async() => {
+  getAccountType() {
     let self = this;
     let account = self.web3.eth.accounts[0];
-    console.log(account);
-    console.log(self.web3.eth.getBalance(account));
+    //console.log(account);
+    //console.log(self.web3.eth.getBalance(account));
     return self.flightSuretyApp.methods
       .getAccountType(account, { from: account });
   }
@@ -84,7 +87,7 @@ export default class App extends React.Component {
       .call({ from: self.owner });
   }
 
-  handleApprove() {
+  handleApprove = async event =>  {
     console.log('handleAPprove');
   };
 
@@ -145,7 +148,7 @@ export default class App extends React.Component {
                   aria-describedby="new-flight-text"
                 />
                 <FormHelperText id="new-flight-text">Register flight</FormHelperText>
-                <Button variant="contained" onClick={this.handleNewFlight} color="primary">Fund</Button>
+                <Button variant="contained" onClick={this.handleNewFlight} color="primary">Register</Button>
               </FormControl>
             </Grid>
             <Grid item>
