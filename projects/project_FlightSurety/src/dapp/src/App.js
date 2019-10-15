@@ -38,20 +38,18 @@ const useStyles = makeStyles(theme => ({
 export default class App extends React.Component {
 
 
+
   constructor(props) {
     super(props);
-    //let contract = new Contract('localhost');
+    this.state = { owner: '' };
+    // let contract = new Contract('localhost');
     let config = Config['localhost'];
     this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
-    this.web3.eth.getAccounts((error, accts) => {
-      this.owner = accts[0];
-    })
+    this.accounts = this.web3.eth.getAccounts();
     this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-    console.log('getaccounttype');
-    console.log(this.flightSuretyApp.methods.getAccountType.call(this.owner, {from:this.owner}));
-    console.log('getaccounttype');
-    this.airlines = [];
-    this.passengers = [];
+    // this.state = { owner: this.accounts[0], accounts: this.accounts, appContract: this.flightSuretyApp };
+    // this.airlines = [];
+    // this.passengers = [];
     //this.classes = useStyles();
 
     //[this.props, this.setValues] = React.useState({
@@ -64,6 +62,9 @@ export default class App extends React.Component {
     //React.useEffect(() => {
     //  setLabelWidth(this.inputLabel.current.offsetWidth);
     //}, []);
+
+    this.handleRegisterAirline = this.handleRegisterAirline.bind(this);
+    this.handleRegisterPassenger = this.handleRegisterPassenger.bind(this);
     this.handleApprove = this.handleApprove.bind(this);
     this.handleFund = this.handleFund.bind(this);
     this.handleNewFlight = this.handleNewFlight.bind(this);
@@ -71,13 +72,30 @@ export default class App extends React.Component {
     this.handleBuyInsurance = this.handleBuyInsurance.bind(this);
   }
 
-  getAccountType() {
+  componentDidMount() {
+    this.loadContracts();
+  }
+
+  async loadContracts() {
+    let config = Config['localhost'];
+    this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+    const accounts = await this.web3.eth.getAccounts();
+    const flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+    this.setState({ owner: accounts[0]});
+    this.setState({ accounts: accounts });
+    this.setState({ flightSuretyApp});
+    const accountType = await flightSuretyApp.methods.getAccountType(accounts[0]).call({from: accounts[0]});
+    this.setState({accountType});
+    console.log(accountType);
+    //console.log(this.state);
+  }
+
+  async getAccountType() {
     let self = this;
-    let account = self.web3.eth.accounts[0];
+    let account = self.owner;
     //console.log(account);
     //console.log(self.web3.eth.getBalance(account));
-    return self.flightSuretyApp.methods
-      .getAccountType(account, { from: account });
+    return await self.flightSuretyApp.methods.getAccountType(account).call({ from: account });
   }
 
   isOperational() {
@@ -87,7 +105,15 @@ export default class App extends React.Component {
       .call({ from: self.owner });
   }
 
-  handleApprove = async event =>  {
+  handleRegisterAirline = async event => {
+    console.log('handleRegisterAirline');
+  }
+
+  handleRegisterPassenger = async event => {
+    console.log('handleRegisterPassenger');
+  }
+
+  handleApprove = async event => {
     console.log('handleAPprove');
   };
 
@@ -105,6 +131,23 @@ export default class App extends React.Component {
 
   handleBuyInsurance() {
     console.log('Buy Insurance clicked');
+  }
+
+  NoAccount() {
+    return (
+      <div>
+        <form autoComplete="off">
+          <Grid container direction='column'>
+            <Grid item>
+              <Button variant="contained" onClick={this.handleRegisterAirline} color="primary">Register Airline</Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" onClick={this.handleRegisterPassenger} color="primary">Register Passenger</Button>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+    );
   }
 
   Airline() {
@@ -260,8 +303,12 @@ export default class App extends React.Component {
   render() {
     //console.log(this.getAccountType());
     return (
+      // const accountType = this.flightSuretyApp.methods.getAccountType.call(this.owner, {from: this.owner});
       <div className="App">
         <header className="App-header">
+          <h1>Flight Surety DApp</h1>
+          <p>Account : {this.state.owner}</p>
+          <p>Account Type : {this.state.accountType}</p>
           <img src={logo} className="App-logo" alt="logo" />
           {this.isOperational() ? this.Airline() : this.Passenger()}
         </header>
