@@ -2,31 +2,31 @@ var FlightSuretyApp = artifacts.require("FlightSuretyApp");
 //var FlightSuretyData = artifacts.require("FlightSuretyData");
 var BigNumber = require('bignumber.js');
 
-var Config = async function(accounts) {
-    
+var Config = async function (accounts) {
+
     // These test addresses are useful when you need to add
     // multiple users in test scripts
     let testAddresses = [
-        "0xd63378790242a416e309e76fe8f96b2e2f06c6f1",
-        "0x63e8b404ec719cca3f8fac31a31982d6bfb66370",
-        "0xaba5a03f37a519f53acce9c711c065e2ca560e5a",
-        "0xa71e4e3b0abd326f4b57f29da4d04fcaf0b52269",
-        "0x5329ca87ba64ff65fd00158917408b6149a13847",
-        "0x7f53c857706928d2bd3359957bb707cfd60dc398",
-        "0xfef059ef3b3da4c852fcabbcdf85afb43f660011",
-        "0xf36147f282e286796899b3a2befc88e620057d32",
-        "0xf9d61adff34dd3542c7c2e4b93cde312828c9e1a",
-        "0x8c85afc0319a974c89f5069cf5c3d4da16d66757",
-        "0x603bdade8f6f0f4615b394539eb6186412751c88",
-        "0x510e2a22f6d57645efe2e42f4096ec9f202f0c81",
-        "0x496adcd7552d8cca49687f653be15d815e113632",
-        "0x7bac07ba46ec4ba29b357b6f15e0f9579660b780",
-        "0x39955a9f2aca9d05c3111ce74815e825d0769776",
-        "0x2b80fddc67888e3f64efc06fd3ee22e0523a9829",
-        "0xef6c5ac5cea2f6b175db7a09781508bcd75736d1",
-        "0xa9dc2c85931068f53224a73317689c08f036ef04",
-        "0xfd387e82496fe36e8557dea32efc491ae5d399d9",
-        "0x86865c30f7521942c7d1e11550ed11b750db2999"
+        "0x5268f2232368ddba43541aa7a16a9c569d0f9d4f",
+        "0x1598cf27b2d63e17fa30ce9cdac39835a600f3aa",
+        "0x4abfe47b1a8ae6e6b081726b91f3430476ac6c78",
+        "0x2ed5c2f4bc12f1b9cd4264ac7f59e92885232b8b",
+        "0xa2a8290cd545e90fa43adb97021c684a64016080",
+        "0x2a5bcd0e81c099ba976af542cfebff7f2b6815cc",
+        "0x3a5a783487a9e7d2e777c653fbc4be028a47d2fa",
+        "0xa6c698cf4d8d321659f29b5312908d96c298a3fc",
+        "0xc5dee7131510aa7058728f156880b82842ef8ac5",
+        "0x59dca29de60ecf413342f921dcf7922007beb2b3",
+        "0x14cf995793928db14b99e6935cc6d67a4e59c342",
+        "0xd7b8689a1f8c94289582be1f07c4ff8f93d48f08",
+        "0xabad30d5b2a1e228583cad529772de5f30a58c65",
+        "0x2e13aac50b4673edf88efc24660d2473e22c870c",
+        "0x69a677c87d90b8c43d7f4d4966db0f6491fcf726",
+        "0xdfc8eaa840220286b2e4ead7da62eba147f30bed",
+        "0x906b93798b52946aebff15a2ff49fbe9d5c9aa85",
+        "0x2afbf87f1b7d53342864e154c32c01ae71b8a020",
+        "0xad23cb6b6de7c2e794f5c39fde08a14c066bed13",
+        "0xe5cefa4edbdce7ad9e437a9397ba4eddc331b8c0"
     ];
 
 
@@ -36,11 +36,11 @@ var Config = async function(accounts) {
     //let flightSuretyData = await FlightSuretyData.new({from: owner});
     //let flightSuretyApp = await FlightSuretyApp.new({from: owner});
     //let flightSuretyData = await FlightSuretyData.deployed(); // instantiated inside fligtSruretyApp
-    let flightSuretyApp = await FlightSuretyApp.new({from:owner});
+    let flightSuretyApp = await FlightSuretyApp.new({ from: owner });
     //pass arguement to flight surety app constructor
     //address of data contract
 
-    
+
     return {
         owner: owner,
         firstAirline: firstAirline,

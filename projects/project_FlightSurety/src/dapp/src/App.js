@@ -16,7 +16,7 @@ import Web3 from 'web3';
 import logo from './flight.jpg';
 import './App.css';
 import './flightsurety.css';
-import Contract from './contract';
+//import Contract from './contract';
 import FlightSuretyApp from './smartcontracts/FlightSuretyApp.json';
 import Config from './config.json';
 
@@ -42,15 +42,16 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { owner: '' };
+    //this.loadContracts();
     // let contract = new Contract('localhost');
-    let config = Config['localhost'];
-    this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
-    this.accounts = this.web3.eth.getAccounts();
-    this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+    // let config = Config['localhost'];
+    // this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+    // this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+    // this.accounts = this.web3.eth.getAccounts();
     // this.state = { owner: this.accounts[0], accounts: this.accounts, appContract: this.flightSuretyApp };
     // this.airlines = [];
     // this.passengers = [];
-    //this.classes = useStyles();
+    // this.classes = useStyles();
 
     //[this.props, this.setValues] = React.useState({
     //  age: '',
@@ -77,43 +78,49 @@ export default class App extends React.Component {
   }
 
   async loadContracts() {
-    let config = Config['localhost'];
-    this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
-    const accounts = await this.web3.eth.getAccounts();
-    const flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-    this.setState({ owner: accounts[0]});
+    //let contract = new Contract('localhost');
+    const config = Config['localhost'];
+    const web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+    const accounts = await web3.eth.getAccounts().catch((e) => { console.log(e); });
+    //console.log(accounts);
+    const flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+    console.log(flightSuretyApp);
+    const accountType = await flightSuretyApp.methods.getAccountType(accounts[0]).call({ from: accounts[0] });
+    this.setState({ owner: accounts[0] });
     this.setState({ accounts: accounts });
-    this.setState({ flightSuretyApp});
-    const accountType = await flightSuretyApp.methods.getAccountType(accounts[0]).call({from: accounts[0]});
-    this.setState({accountType});
-    console.log(accountType);
+    this.setState({ flightSuretyApp: flightSuretyApp });
+    this.setState({ accountType: accountType });
+    this.setState({ newName: '' });
     //console.log(this.state);
   }
 
   async getAccountType() {
-    let self = this;
-    let account = self.owner;
-    //console.log(account);
+    let account = this.owner;
+    console.log(account);
     //console.log(self.web3.eth.getBalance(account));
-    return await self.flightSuretyApp.methods.getAccountType(account).call({ from: account });
+    return await this.state.flightSuretyApp.methods.getAccountType(account).call({ from: account });
   }
 
   isOperational() {
     let self = this;
-    return self.flightSuretyApp.methods
+    return self.state.flightSuretyApp.methods
       .isOperational()
       .call({ from: self.owner });
   }
 
-  handleRegisterAirline = async event => {
+  async handleRegisterAirline() {
+    const el = document.getElementById('newName');
     console.log('handleRegisterAirline');
+    console.log(el.value);
+    console.log(this.state.flightSuretyApp);
+    await this.state.flightSuretyApp.methods.registerAirline(el.value).call({ from: this.state.owner });
   }
 
-  handleRegisterPassenger = async event => {
+  async handleRegisterPassenger() {
     console.log('handleRegisterPassenger');
   }
 
-  handleApprove = async event => {
+  async handleApprove() {
     console.log('handleAPprove');
   };
 
@@ -134,10 +141,18 @@ export default class App extends React.Component {
   }
 
   NoAccount() {
+    //this.setState({newName: ''});
     return (
       <div>
         <form autoComplete="off">
           <Grid container direction='column'>
+            <Grid item>
+              <TextField
+                id="newName"
+                label="newName"
+                margin="normal"
+               />
+            </Grid>
             <Grid item>
               <Button variant="contained" onClick={this.handleRegisterAirline} color="primary">Register Airline</Button>
             </Grid>
@@ -310,7 +325,18 @@ export default class App extends React.Component {
           <p>Account : {this.state.owner}</p>
           <p>Account Type : {this.state.accountType}</p>
           <img src={logo} className="App-logo" alt="logo" />
-          {this.isOperational() ? this.Airline() : this.Passenger()}
+          {
+            (() => {
+              console.log(this.state.accountType);
+              if (10 == this.state.accountType) {
+                return (this.Airline());
+              } else if (20 == this.state.accountType) {
+                return (this.Passenger());
+              } else if (0 == this.state.accountType) {
+                return (this.NoAccount());
+              }
+            })()
+          }
         </header>
       </div>
     );

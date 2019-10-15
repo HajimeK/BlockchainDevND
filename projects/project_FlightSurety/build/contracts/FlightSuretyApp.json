@@ -27271,14 +27271,153 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0x6738444db39abbc0f703de7b74776a83d0a0b55dbbff2a22255885bddda77496": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "index",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "name": "airline",
+              "type": "address"
+            }
+          ],
+          "name": "eventApprovedAirline",
+          "type": "event",
+          "signature": "0x6738444db39abbc0f703de7b74776a83d0a0b55dbbff2a22255885bddda77496"
+        },
+        "0xc0d3746fdb923f9b90c69401fec84ba18801de177690249322689a723be83189": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "flightID",
+              "type": "bytes32"
+            }
+          ],
+          "name": "eventRegisterFlight",
+          "type": "event",
+          "signature": "0xc0d3746fdb923f9b90c69401fec84ba18801de177690249322689a723be83189"
+        },
+        "0x029a3f1d54054fb826aa6503ceba4424858dc0b660a751dfd9881d615deec1c5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "airline",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "flightID",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "name": "eventUpdateFlightStatus",
+          "type": "event",
+          "signature": "0x029a3f1d54054fb826aa6503ceba4424858dc0b660a751dfd9881d615deec1c5"
+        },
+        "0xe23f5229de535c091e3b7bec2665f5d698192d3b31393066e8987b7a05076b6c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "airline",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "flight",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "name": "FlightStatusInfo",
+          "type": "event",
+          "signature": "0xe23f5229de535c091e3b7bec2665f5d698192d3b31393066e8987b7a05076b6c"
+        },
+        "0x43c853095c2752648493c88b4baac4d580d2594ffb00c6f1d4242d844514f783": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "airline",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "flight",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "name": "OracleReport",
+          "type": "event",
+          "signature": "0x43c853095c2752648493c88b4baac4d580d2594ffb00c6f1d4242d844514f783"
+        },
+        "0x3ed01f2c3fc24c6b329d931e35b03e390d23497d22b3f90e15b600343e93df11": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "index",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "name": "airline",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "flight",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "OracleRequest",
+          "type": "event",
+          "signature": "0x3ed01f2c3fc24c6b329d931e35b03e390d23497d22b3f90e15b600343e93df11"
+        }
+      },
       "links": {},
-      "address": "0x30D037e5D245eBC4465A6e3383a741F9489312d6",
-      "transactionHash": "0x90434297ad9f9f1fb3c6fe608137da5fc87ad7d7a52c82272a126fa5ef6263d8"
+      "address": "0xD2CFd001Ba9e1c6c469Da2528b2E8bcEaD71EaFe",
+      "transactionHash": "0x452cd175fb5cffe4bec9201e2c06186d10ed0bf1aed81f105d396499b5085d8d"
     }
   },
-  "schemaVersion": "3.0.11",
-  "updatedAt": "2019-10-14T13:57:28.625Z",
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2019-10-15T16:42:43.578Z",
   "devdoc": {
     "methods": {
       "constructor": {

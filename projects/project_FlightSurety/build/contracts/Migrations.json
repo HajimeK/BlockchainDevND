@@ -1377,12 +1377,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x601673feB8274e936f80F3782258110dda97b794",
-      "transactionHash": "0xa06a179bfec2c9a1621800f3b21e63e81a917952bffa051e23afd1de5b008584"
+      "address": "0x1e169345e167BB71097448488BCFC107AfAba47E",
+      "transactionHash": "0xaf1cbf5009ac87d1edfccdd9d84d400f86af5991a9ab29e3149c7d989f449555"
     }
   },
-  "schemaVersion": "3.0.11",
-  "updatedAt": "2019-10-14T13:57:28.638Z",
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2019-10-15T16:42:43.589Z",
   "devdoc": {
     "methods": {}
   },
