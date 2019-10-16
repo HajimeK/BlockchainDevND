@@ -69,6 +69,19 @@ export default class Contract {
             .call({ from: self.owner });
     }
 
+    registerAirline(name, account) {
+        let self = this;
+        self.flightSuretyApp
+            .methods
+            .registerAirline(name)
+            .send({
+                from: account,
+                gas: 4712388,
+                gasPrice: 100000000000
+            }, (error, result) => {
+                console.log(result);
+            })
+    }
 
     fetchFlightStatus(flight, callback) {
         let self = this;

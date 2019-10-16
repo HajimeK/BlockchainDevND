@@ -46,7 +46,7 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     /*                                            EVENTS                                        */
     /********************************************************************************************/
-    event eventGetAccountType(uint8 type);
+    event eventGetAccountType(uint8 accountType);
     //event eventRegisteredAirline(address airline);
     event eventApprovedAirline(uint8 index, address airline);
     //event eventFundedAirline(address airline);
@@ -120,9 +120,8 @@ contract FlightSuretyApp {
 
     function getAccountType(address _account)
         external
-        view
-        requireIsOperational7
-        return (uint8)
+        requireIsOperational
+        returns (uint8)
    {
         if(_isAirline(_account)) {
             emit eventGetAccountType(TYPE_AIRLINE);

@@ -102,7 +102,8 @@ export default class App extends React.Component {
     console.log('handleRegisterAirline');
     console.log(el.value);
     console.log(this.state.contract);
-    //await this.state.flightSuretyApp.methods.registerAirline(el.value).call({ from: this.state.owner });
+    const accounts = this.state.accounts;
+    await this.state.contract.registerAirline(el.value, accounts[0]);
   }
 
   async handleRegisterPassenger() {
