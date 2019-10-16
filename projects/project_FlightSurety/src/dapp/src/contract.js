@@ -13,15 +13,43 @@ export default class Contract {
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
         this.initialize();
         this.owner = null;
+        this.accountType = 0;
         this.airlines = [];
         this.passengers = [];
     }
 
-    initialize() {
+    async initialize() {
+        let self = this;
+
         this.web3.eth.getAccounts((error, accts) => {
 
-            this.owner = accts[0];
+            self.owner = accts[0];
+            // self.flightSuretyApp.methods.getAccountType(accts[0])
+            //     .send({
+            //         from: accts[0],
+            //         gas: 4712388,
+            //         gasPrice: 100000000000
+            //     }, (error, result) => {
+            //         callback(result);
+            //     })
 
+            // self.accountType = self.flightSuretyApp.methods
+            //     .getAccountType(accts[0])
+            //     .call({
+            //         from: accts[0]
+            //     });
+            // self.accountType = self.flightSuretyApp.methods
+            //     .getAccountType(accts[0])
+            //     .send({
+            //         from: accts[0],
+            //         gas: 4712388,
+            //         gasPrice: 100000000000
+            //     }, (error, result) => {
+            //         console.log(result);
+            //     })
+
+            console.log(accts[0]);
+            // console.log(self.accountType);
             // let counter = 1;
 
             // while(this.airlines.length < 5) {
@@ -40,6 +68,7 @@ export default class Contract {
             .isOperational()
             .call({ from: self.owner });
     }
+
 
     fetchFlightStatus(flight, callback) {
         let self = this;

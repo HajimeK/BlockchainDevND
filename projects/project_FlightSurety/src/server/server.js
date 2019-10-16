@@ -38,13 +38,13 @@ let db = new sqlite3.Database(':memory:', (err) => {
   db.run("CREATE TABLE flight (flightKey INTEGER PRIMARY KEY, status INTEGER NOT NULL)")
 });
 
-// flightSuretyApp.events.OracleRequest(
-//   {fromBlock: 0},
-//   function (error, event) {
-//     if (error) console.log(error)
-//     console.log(event)
-//   }
-// );
+flightSuretyApp.events.OracleRequest(
+  {fromBlock: 0},
+  function (error, event) {
+    if (error) console.log(error)
+    console.log(event)
+  }
+);
 
 flightSuretyApp.events.eventRegisterFlight({
   fromBlock: 0
@@ -54,7 +54,7 @@ flightSuretyApp.events.eventRegisterFlight({
     console.log(event)
     const flightKey = event.returnValues.flightKey
     const flightStatus = STATUS_CODE_UNKNOWN
-    db.run("INSERT INTO flight (" + flightKen + " , " + flightStatus +")" )
+    db.run("INSERT INTO flight (" + flightKey + " , " + flightStatus +")" )
   }
 });
 
