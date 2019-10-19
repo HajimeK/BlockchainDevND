@@ -27692,19 +27692,6 @@
   "networks": {
     "5777": {
       "events": {
-        "0x57129985a62258053e76816d23e061f653beb7fb3b526959772da9d999515c62": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "name": "accountType",
-              "type": "uint8"
-            }
-          ],
-          "name": "eventGetAccountType",
-          "type": "event",
-          "signature": "0x57129985a62258053e76816d23e061f653beb7fb3b526959772da9d999515c62"
-        },
         "0x6738444db39abbc0f703de7b74776a83d0a0b55dbbff2a22255885bddda77496": {
           "anonymous": false,
           "inputs": [
@@ -27842,6 +27829,19 @@
           "name": "OracleRequest",
           "type": "event",
           "signature": "0x3ed01f2c3fc24c6b329d931e35b03e390d23497d22b3f90e15b600343e93df11"
+        },
+        "0x57129985a62258053e76816d23e061f653beb7fb3b526959772da9d999515c62": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "accountType",
+              "type": "uint8"
+            }
+          ],
+          "name": "eventGetAccountType",
+          "type": "event",
+          "signature": "0x57129985a62258053e76816d23e061f653beb7fb3b526959772da9d999515c62"
         }
       },
       "links": {},
@@ -27850,7 +27850,7 @@
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-10-18T04:41:06.619Z",
+  "updatedAt": "2019-10-18T04:30:57.521Z",
   "devdoc": {
     "methods": {
       "constructor": {

@@ -7,12 +7,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-header {
-  background-image: url('flight.jpg'); /* Source: iStockPhoto */
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
