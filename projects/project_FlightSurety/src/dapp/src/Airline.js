@@ -13,16 +13,43 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 
-
+import Web3 from 'web3';
 
 class Airline extends React.Component {
 
     handleApprove = e => {
         console.log('handleAPprove');
+        const el = document.getElementById('fund-amount');
+        console.log(el.value);
+
+        const { drizzle, drizzleState } = this.props;
+        var state = drizzle.store.getState()
+        if (state.drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.approveAirline(el.value).send({
+                from: state.accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+        }
     };
 
     handleFund = e => {
         console.log('handleFund');
+        const el = document.getElementById('fund-amount');
+        console.log(el.value);
+
+        const { drizzle, drizzleState } = this.props;
+        var state = drizzle.store.getState()
+        if (state.drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.fund().send({
+                from: state.accounts[0],
+                value: 100000000000,
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+        }
     };
 
     handleNewFlight = e => {
@@ -45,8 +72,8 @@ class Airline extends React.Component {
                         <Grid container direction='row' spacing={3}>
                             <Grid item xs={6}>
                                 <TextField
-                                    id="newName"
-                                    label="newName"
+                                    id="approvedAccount"
+                                    label="Approved Account"
                                     margin="normal"
                                 />
                             </Grid>
@@ -141,7 +168,6 @@ class Airline extends React.Component {
                             <Grid item xs={3}>
                                 <FormControl>
                                     <Select
-                                        value={this.props.status}
                                         inputProps={{ name: 'status', id: 'status-list', }}>
                                         <MenuItem value={0}>UNKNOWN</MenuItem>
                                         <MenuItem value={10}>ON TIME</MenuItem>

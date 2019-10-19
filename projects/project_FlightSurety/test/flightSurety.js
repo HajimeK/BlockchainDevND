@@ -51,20 +51,24 @@ contract('Flight Surety Tests', async (accounts) => {
     });
 
     it(`(airline) registerAirline for initial airplane`, async function () {
-        // Get operating status
-        let type = 90;
-        let status = 90;
+        var eventEmitted = false
         try {
             await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
-            type = await config.flightSuretyApp.getAccountType(config.testAddresses[0]);
-            status = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[0]);
+            const ev = await config.flightSuretyApp.getAccountType(config.testAddresses[0]).then((result) => {
+                assert.equal(result.logs[0].event, "eventGetAccountType", "Not registered properly");
+            });
         } catch (e) {
             console.log(e);
-            type = 99;
-            status = 99;
         }
-        assert.equal(type, 10, "not TYPE_AIRLINE");
-        assert.equal(status, 10, "not STATUS_CODE_APPROVED");
+
+        eventEmitted = false
+        try {
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[0]).then((result) => {
+                assert.equal(result.logs[0].event, "eventGetAirlineStatus", "Not registered properly");
+            });
+        } catch (e) {
+            console.log(e);
+        }
     });
 
     it(`(airline) isApproved for initial airplane`, async function () {

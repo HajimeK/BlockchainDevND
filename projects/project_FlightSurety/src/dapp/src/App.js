@@ -2,10 +2,16 @@ import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
 
-import FlightSurety from "./FlightSurety"
+import { DrizzleProvider } from "drizzle-react";
+import { LoadingContainer } from "drizzle-react-components";
+
+//import FlightSurety from "./FlightSurety"
 import Account from "./Account"
 import Airline from "./Airline"
 import Passenger from "./Passenger"
+
+import drizzleOptions from "./drizzleOptions";
+import store from './middleware'
 
 class App extends Component {
   state = { loading: true, drizzleState: null };
@@ -37,10 +43,14 @@ class App extends Component {
         <header className="App-header">
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <div className="App">
-            <Account
-              drizzle={this.props.drizzle}
-              drizzleState={this.state.drizzleState}
-            />
+            <DrizzleProvider store={store} options={drizzleOptions}>
+              <LoadingContainer>
+                <Account
+                  drizzle={this.props.drizzle}
+                  drizzleState={this.state.drizzleState}
+                />
+              </LoadingContainer>
+            </DrizzleProvider>
             <Airline
               drizzle={this.props.drizzle}
               drizzleState={this.state.drizzleState}

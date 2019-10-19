@@ -22,8 +22,55 @@ import TableRow from '@material-ui/core/TableRow';
 
 class Account extends React.Component {
 
+    componentDidMount() {
+        const { drizzle, drizzleState } = this.props;
+        console.log(drizzle);
+        console.log(drizzleState);
+        const contract = drizzle.contracts.FlightSuretyApp;
+        var state = drizzle.store.getState()
+        contract.methods.getAccountType.cacheSend(
+            state.accounts[0],
+            {
+                from: state.accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            }, (error, result) => {
+                console.log(result);
+            });
+
+        // let drizzle know we want to watch the `myString` method
+        //const operational = contract.methods.registerAirline.cacheCall();
+
+    }
+
     handleRegisterAirline = e => {
         console.log('handleRegisterAirline');
+        const el = document.getElementById('newName');
+        console.log(el.value);
+
+        const { drizzle, drizzleState } = this.props;
+        var state = drizzle.store.getState()
+        console.log(state);
+        if (state.drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+                from: state.accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+            // console.log(state.transactionStack[stackId]);
+            // if (state.transactionStack[stackId]) {
+            //     const txHash = state.transactionStack[stackId]
+            //     console.log(state);
+            // }
+
+            drizzle.contracts.FlightSuretyApp.methods.getAccountType(state.accounts[0]).call();
+                // .send({
+                //     from: state.accounts[0],
+                //     gas: 4712388,
+                //     gasPrice: 100000000000
+                // });
+        }
     };
 
     handleRegisterPassenger = e => {

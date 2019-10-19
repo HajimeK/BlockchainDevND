@@ -50,7 +50,6 @@ class Passenger extends React.Component {
                                 <FormControl>
                                     <InputLabel htmlFor="flight-list">Flight</InputLabel>
                                     <Select
-                                        width={1 / 5}
                                         inputProps={{ name: 'flight', id: 'flight-list', }}>
                                         <MenuItem value={10}>001</MenuItem>
                                         <MenuItem value={20}>002</MenuItem>
