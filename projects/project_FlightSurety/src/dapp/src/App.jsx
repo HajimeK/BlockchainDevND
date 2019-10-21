@@ -2,26 +2,32 @@ import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
 
-import { DrizzleProvider } from "drizzle-react";
+import {
+  DrizzleProvider,
+  DrizzleContext
+} from "drizzle-react";
+import AccountContainer from "./Account/AccountContainer";
 import { LoadingContainer } from "drizzle-react-components";
 
 //import FlightSurety from "./FlightSurety"
-import Account from "./Account"
+import Account from "./Account/Account"
 import Airline from "./Airline"
 import Passenger from "./Passenger"
 
+import store from './middleware';
 import drizzleOptions from "./drizzleOptions";
-import store from './middleware'
+
 
 class App extends Component {
   state = { loading: true, drizzleState: null };
 
   componentDidMount() {
     const { drizzle } = this.props;
+    console.log(this.props);
 
     // subscribe to changes in the store
     this.unsubscribe = drizzle.store.subscribe(() => {
-
+      this.setState(drizzle);
       // every time the store updates, grab the state from drizzle
       const drizzleState = drizzle.store.getState();
 
@@ -38,6 +44,7 @@ class App extends Component {
 
   render() {
     if (this.state.loading) return ("Loading Drizzle...");
+    //console.log(this.props);
     return (
       <div className="App">
         <header className="App-header">
@@ -45,10 +52,9 @@ class App extends Component {
           <div className="App">
             <DrizzleProvider store={store} options={drizzleOptions}>
               <LoadingContainer>
-                <Account
-                  drizzle={this.props.drizzle}
-                  drizzleState={this.state.drizzleState}
-                />
+                <DrizzleContext.Provider drizzle={this.props.drizzle} >
+                  <AccountContainer />
+                </DrizzleContext.Provider>
               </LoadingContainer>
             </DrizzleProvider>
             <Airline

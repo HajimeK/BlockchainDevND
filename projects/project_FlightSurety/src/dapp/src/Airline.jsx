@@ -1,17 +1,20 @@
 import React from "react";
 
-import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import Paper from '@material-ui/core/Paper';
+import {
+    Button,
+    InputLabel,
+    MenuItem,
+    FormHelperText,
+    FormControl,
+    Select,
+    Input,
+    Grid,
+    TextField,
+    Typography,
+    Divider,
+    Paper,
+} from '@material-ui/core'
+
 
 import Web3 from 'web3';
 
@@ -63,7 +66,7 @@ class Airline extends React.Component {
 
     render() {
         return (
-            <div style={{ textAlign: 'center', margin: '50px auto' }}>
+            <div className="App" style={{ textAlign: 'center', margin: '50px auto' }}>
                 <Paper>
                     <Typography variant="subtitle1" gutterBottom>
                         Approve:
