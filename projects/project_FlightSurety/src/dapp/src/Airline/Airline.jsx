@@ -63,10 +63,47 @@ class Airline extends React.Component {
 
     handleNewFlight = e => {
         console.log('handleNewFlight');
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
+        const el = document.getElementById('new-flight');
+        const timestamp = new Date(2019, 12, 31, 1, 1, 1).getTime();
+
+
+        var state = drizzle.store.getState()
+        if (drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.registerFlight(el.value, timestamp).send({
+                from: accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+        }
     };
 
     handleFlightStatus = e => {
         console.log('handleFlightStatus');
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
+        const flight = document.getElementById('flight-update');
+        console.log(flight.value);
+        console.log(document.getElementById('flight-timestamp-update').value);
+        const timestamp = new Date(2019, 12, 31, 1, 1, 1).getTime();
+        const status = document.getElementById("flight-status-update");
+        console.log(status.value);
+
+        var state = drizzle.store.getState()
+        if (drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.updateFlightStatus(
+                flight.value,
+                timestamp,
+                status.value)
+                .send({
+                    from: accounts[0],
+                    gas: 4712388,
+                    gasPrice: 100000000000
+                });
+        }
     };
 
 
@@ -152,32 +189,31 @@ class Airline extends React.Component {
                         <Grid container direction='row' spacing={3}>
                             <Grid item xs={3}>
                                 <FormControl>
-                                    <Select
-                                        width={1 / 5}
-                                        value={this.props.airline}
-                                        inputProps={{ name: 'airline', id: 'airline-list', }}>
-                                        <MenuItem value={10}>JAL</MenuItem>
-                                        <MenuItem value={20}>ANA</MenuItem>
-                                        <MenuItem value={30}>AA</MenuItem>
-                                    </Select>
-                                    <InputLabel htmlFor="flight-status">Airline</InputLabel>
+                                    <Input
+                                        id="flight-update"
+                                        value={this.props.fundAmount}
+                                        aria-describedby="fund-amount-text"
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <FormControl>
+                                    <TextField
+                                        id="flight-timestamp-update"
+                                        label="Next appointment"
+                                        type="datetime-local"
+                                        defaultValue="2020-01-01T10:30"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
                                 </FormControl>
                             </Grid>
                             <Grid item xs={3}>
                                 <FormControl>
                                     <Select
-                                        value={this.props.flight}
-                                        inputProps={{ name: 'flight', id: 'flight-list', }}>
-                                        <MenuItem value={10}>001</MenuItem>
-                                        <MenuItem value={20}>002</MenuItem>
-                                        <MenuItem value={30}>003</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <FormControl>
-                                    <Select
-                                        inputProps={{ name: 'status', id: 'status-list', }}>
+                                        name='status'
+                                        id="flight-status-update">
                                         <MenuItem value={0}>UNKNOWN</MenuItem>
                                         <MenuItem value={10}>ON TIME</MenuItem>
                                         <MenuItem value={20}>LATE AIRLINE</MenuItem>

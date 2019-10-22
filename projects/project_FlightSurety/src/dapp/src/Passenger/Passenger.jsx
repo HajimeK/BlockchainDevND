@@ -17,12 +17,51 @@ import Paper from '@material-ui/core/Paper';
 
 class Passenger extends React.Component {
 
-    handleuyInsurance = e => {
+    handleBuyInsurance = e => {
         console.log('handleInsurance');
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
+
+        const airlineBuy = document.getElementById("airline-buy");
+        const flightBuy = document.getElementById("flight-buy");
+        const passengerBuy = document.getElementById("passenger-buy");
+        const flightBuyTimestamp = document.getElementById("flight-buy-timestamp");
+        console.log(flightBuyTimestamp.value);
+        const timestamp = new Date(2019, 12, 31, 1, 1, 1).getTime();
+
+        const flightInsuranceAmount = document.getElementById("flight-insurance-amount");
+
+
+        if (drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.buy(
+                airlineBuy.value,
+                flightBuy.value,
+                timestamp,
+                passengerBuy.value)
+            .send({
+                from: accounts[0],
+                value: Number(flightInsuranceAmount.value),
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+        }
     };
 
     handleWithdraw = e => {
         console.log('handleWithdraw');
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
+        const el = document.getElementById('withdraw-amount');
+
+        if (drizzleStatus.initialized) {
+            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.withdraw(el.value).send({
+                from: accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+        }
     };
 
     render() {
@@ -30,50 +69,62 @@ class Passenger extends React.Component {
             <div style={{ textAlign: 'center', margin: '50px auto' }}>
                 <Paper>
                     <Typography variant="subtitle1" gutterBottom>
-                        Approve:
+                        Buy Insurance:
                     </Typography>
                     <form autoComplete="off">
                         <Grid container direction='row' alignItems='stretch'>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="airline-list">Airline</InputLabel>
-                                    <Select
-                                        width={1 / 5}
-                                        inputProps={{ name: 'airline', id: 'airline-list', }}>
-                                        <MenuItem value={10}>JAL</MenuItem>
-                                        <MenuItem value={20}>ANA</MenuItem>
-                                        <MenuItem value={30}>AA</MenuItem>
-                                    </Select>
+                                    <InputLabel htmlFor="airline-buy">Fund</InputLabel>
+                                    <Input
+                                        id="airline-buy"
+                                        aria-describedby="airline-buy"
+                                    />
+                                    <FormHelperText id="airline-buy-helper">Flight to insure</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="flight-list">Flight</InputLabel>
-                                    <Select
-                                        inputProps={{ name: 'flight', id: 'flight-list', }}>
-                                        <MenuItem value={10}>001</MenuItem>
-                                        <MenuItem value={20}>002</MenuItem>
-                                        <MenuItem value={30}>003</MenuItem>
-                                    </Select>
+                                    <InputLabel htmlFor="flight-buy">Fund</InputLabel>
+                                    <Input
+                                        id="flight-buy"
+                                        aria-describedby="flight-buy"
+                                    />
+                                    <FormHelperText id="flight-buy-helper">Flight to insure</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
-                                <TextField
-                                    width={1 / 5}
-                                    id="flight-status"
-                                    label="Flight Status"
-                                    margin="normal"
-                                />
+                                <FormControl>
+                                    <InputLabel htmlFor="passenger-buy">Fund</InputLabel>
+                                    <Input
+                                        id="passenger-buy"
+                                        aria-describedby="passenger-buy"
+                                    />
+                                    <FormHelperText id="passenger-buy-helper">Flight to insure</FormHelperText>
+                                </FormControl>
+                            </Grid>
+                            <Grid>
+                                <FormControl>
+                                    <TextField
+                                        id="flight-buy-timestamp"
+                                        label="flight-buy-timestamp"
+                                        type="datetime-local"
+                                        defaultValue="2020-01-01T10:30"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </FormControl>
                             </Grid>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="component-insuranceAmount">Insurance Amount</InputLabel>
+                                    <InputLabel htmlFor="flight-insurance-amount">Insurance Amount</InputLabel>
                                     <Input
                                         width={1 / 5}
-                                        id="component-insuranceAmount"
-                                        aria-describedby="component-helper-text"
+                                        id="flight-insurance-amount"
+                                        aria-describedby="flight-insurance-amount"
                                     />
-                                    <FormHelperText id="component-helper-text">Input Insurance Amount</FormHelperText>
+                                    <FormHelperText id="flight-insurance-amount-helper">Input Insurance Amount</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
@@ -98,12 +149,12 @@ class Passenger extends React.Component {
                         <Grid container direction='row'>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="new-flight">Withdraw Amount</InputLabel>
+                                    <InputLabel htmlFor="withdraw-amount">Withdraw Amount</InputLabel>
                                     <Input
-                                        id="new-flight"
-                                        aria-describedby="new-flight-text"
+                                        id="withdraw-amount"
+                                        aria-describedby="withdraw-amount"
                                     />
-                                    <FormHelperText id="new-flight-text">Withdraw Amount</FormHelperText>
+                                    <FormHelperText id="withdraw-amount-helper">Withdraw Amount</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
