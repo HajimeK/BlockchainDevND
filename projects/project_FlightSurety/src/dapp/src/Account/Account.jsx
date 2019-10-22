@@ -54,13 +54,8 @@ class Account extends React.Component {
 
         const { drizzle } = this.props;
         const { drizzleStatus, accounts } = this.props.drizzleState;
-        console.log(this.props);
-        // console.log(accounts);
-        // const { drizzle, drizzleState } = this.props;
-        //var state = drizzle.store.getState()
-        //console.log(state);
+
         if (drizzleStatus.initialized) {
-            //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
             drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
                 from: accounts[0],
                 gas: 4712388,
@@ -83,6 +78,32 @@ class Account extends React.Component {
 
     handleRegisterPassenger = e => {
         console.log('handleRegisterPassenger');
+        const el = document.getElementById('newName');
+        // console.log(el.value);
+        // console.log(this);
+
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
+
+        if (drizzleStatus.initialized) {
+            drizzle.contracts.FlightSuretyApp.methods.registerPassenger(el.value).send({
+                from: accounts[0],
+                gas: 4712388,
+                gasPrice: 100000000000
+            });
+            // console.log(state.transactionStack[stackId]);
+            // if (state.transactionStack[stackId]) {
+            //     const txHash = state.transactionStack[stackId]
+            //     console.log(state);
+            // }
+
+            drizzle.contracts.FlightSuretyApp.methods.getAccountType(accounts[0])
+                .send({
+                    from: accounts[0],
+                    gas: 4712388,
+                    gasPrice: 100000000000
+                });
+        }
     };
 
     render() {

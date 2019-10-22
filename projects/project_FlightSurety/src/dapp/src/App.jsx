@@ -6,13 +6,10 @@ import {
   DrizzleProvider,
   DrizzleContext
 } from "drizzle-react";
-import AccountContainer from "./Account/AccountContainer";
+import AccountContainer from './Account/AccountContainer';
+import AirlineContainer from './Airline/AirlineContainer';
+import PassengerContainer from './Passenger/PassengerContainer';
 import { LoadingContainer } from "drizzle-react-components";
-
-//import FlightSurety from "./FlightSurety"
-import Account from "./Account/Account"
-import Airline from "./Airline"
-import Passenger from "./Passenger"
 
 import store from './middleware';
 import drizzleOptions from "./drizzleOptions";
@@ -53,18 +50,12 @@ class App extends Component {
             <DrizzleProvider store={store} options={drizzleOptions}>
               <LoadingContainer>
                 <DrizzleContext.Provider drizzle={this.props.drizzle} >
-                  <AccountContainer />
+                <AccountContainer />
+                <AirlineContainer />
+                <PassengerContainer />
                 </DrizzleContext.Provider>
               </LoadingContainer>
             </DrizzleProvider>
-            <Airline
-              drizzle={this.props.drizzle}
-              drizzleState={this.state.drizzleState}
-            />
-            <Passenger
-              drizzle={this.props.drizzle}
-              drizzleState={this.state.drizzleState}
-            />
           </div>
         </header>
       </div>

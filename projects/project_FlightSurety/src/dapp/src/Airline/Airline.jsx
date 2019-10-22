@@ -39,16 +39,15 @@ class Airline extends React.Component {
 
     handleFund = e => {
         console.log('handleFund');
-        const el = document.getElementById('fund-amount');
-        console.log(el.value);
+        const { drizzle } = this.props;
+        const { drizzleStatus, accounts } = this.props.drizzleState;
 
-        const { drizzle, drizzleState } = this.props;
         var state = drizzle.store.getState()
-        if (state.drizzleStatus.initialized) {
+        if (drizzleStatus.initialized) {
             //const stackId = drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
             drizzle.contracts.FlightSuretyApp.methods.fund().send({
-                from: state.accounts[0],
-                value: 100000000000,
+                from: accounts[0],
+                value: 1000000000000000000,
                 gas: 4712388,
                 gasPrice: 100000000000
             });
