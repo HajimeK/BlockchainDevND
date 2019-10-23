@@ -36,7 +36,6 @@ contract FlightSuretyData is AirlineData, PassengerData {
     function insurance(bytes32 flightKey, string calldata insurancee, uint256 payamount)
         external
         requireIsOperational
-        requireContractOwner
     {
         bytes32 insuranceId = keccak256(
                     abi.encodePacked(
@@ -49,8 +48,7 @@ contract FlightSuretyData is AirlineData, PassengerData {
     function addPayment(bytes32 flightKey)
         external
         requireIsOperational
-        requireContractOwner
-    {
+     {
         string[] storage paids = flightInsurancees[flightKey];
         for(uint8 i = 0; i < paids.length; i++) {
             bytes32 insuranceID = keccak256(

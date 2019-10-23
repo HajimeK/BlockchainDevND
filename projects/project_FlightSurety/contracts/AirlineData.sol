@@ -76,11 +76,12 @@ contract AirlineData {
 
   // Define a function 'addAirline' that adds this role
   function addAirline(
+      string calldata name,
       address account,
-      string calldata name)
+      address accountRegisterBy)
     external
   {
-    _addAirline(account, name);
+    _addAirline(name, account, accountRegisterBy);
   }
 
   // Define a function 'renounceAirline' to renounce this role
@@ -90,15 +91,19 @@ contract AirlineData {
 
   // Define an internal function '_addAirline' to add this role, called by 'addAirline'
   function _addAirline(
+      string memory _name,
       address account,
-      string memory name)
+      address accountRegisterBy)
     internal {
-    require(bytes(name).length != 0, "Airline company ame is mandatory");
+    require(bytes(_name).length != 0, "Airline company name is mandatory");
+    if ((entries > 0) && (entries < 4)) { // initial airline is automatically resigered, but  others should be registered by other.already added.
+      require(isApproved(accountRegisterBy), "Only existing airline may register a new airline");
+    }
 
     entries++;
-    airlines[account] = Airline({name : name, isApproved : false, isFunded : false, numOfApprovers : 0});
+    airlines[account] = Airline({name : _name, isApproved : false, isFunded : false, numOfApprovers : 0});
     airlines[account].isApproved = _approvable(airlines[account]); // onlyt true when _lessThanMinimum() is true
-    airlineByName[name] = account;
+    airlineByName[_name] = account;
 
     //emit AirlineAdded(account);
   }

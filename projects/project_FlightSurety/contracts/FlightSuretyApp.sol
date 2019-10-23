@@ -47,6 +47,7 @@ contract FlightSuretyApp {
     /*                                            EVENTS                                        */
     /********************************************************************************************/
     event eventGetAccountType(uint8 accountType);
+    event eventGetAirlineStatus(uint8 airlineStatus);
     //event eventRegisteredAirline(address airline);
     event eventApprovedAirline(uint8 index, address airline);
     //event eventFundedAirline(address airline);
@@ -103,6 +104,10 @@ contract FlightSuretyApp {
         _;
     }
 
+    modifier onlyFundedAirline(address account) {
+        require(_isFundedAirline(account), "This account is not a funded airplane account.");
+        _;
+    }
     /**
     * @dev Modifier that requires the account is passenger
     */
@@ -114,6 +119,11 @@ contract FlightSuretyApp {
     function _isAirline(address account) private view returns (bool) {
         return flightSuretyData.isAirline(account);
     }
+
+    function _isFundedAirline(address account) private view returns (bool) {
+        return flightSuretyData.isFunded(account);
+    }
+
     function _isPassenger(address account) private view returns (bool) {
         return flightSuretyData.isPassenger(account);
     }
@@ -147,6 +157,7 @@ contract FlightSuretyApp {
     {
         contractOwner = msg.sender;
         flightSuretyData = new FlightSuretyData(msg.sender);
+        flightSuretyData.addAirline('default', msg.sender, msg.sender);
     }
 
     /********************************************************************************************/
@@ -184,11 +195,11 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */
-    function registerAirline(string calldata name)
+    function registerAirline(string calldata name, address account, address accountRegisterBy)
         external
-        onlyNewAccount(msg.sender)
+        onlyNewAccount(account)
     {
-        flightSuretyData.addAirline(msg.sender, name);
+        flightSuretyData.addAirline(name, account, accountRegisterBy);
         //emit eventRegisteredAirline(msg.sender);
     }
 
@@ -216,16 +227,18 @@ contract FlightSuretyApp {
 
     function getAirlineStatus(address _account)
         external
-        view
         requireIsOperational
         onlyAirline(_account)
         returns (uint8) {
 
         if(flightSuretyData.isFunded(_account)) {
+            emit eventGetAirlineStatus(STATUS_CODE_APPROVED_FUNDED);
             return STATUS_CODE_APPROVED_FUNDED;
         } else if(flightSuretyData.isApproved(_account)) {
+            emit eventGetAirlineStatus(STATUS_CODE_APPROVED);
             return STATUS_CODE_APPROVED;
         } else {
+            emit eventGetAirlineStatus(STATUS_CODE_REGISTERED);
             return STATUS_CODE_REGISTERED;
         }  // rejection is out of scope
     }
@@ -241,6 +254,7 @@ contract FlightSuretyApp {
         external
         requireIsOperational
         onlyAirline(msg.sender)
+        onlyFundedAirline(msg.sender)
     {
         bytes32 flightKey = getFlightKey(
                                 msg.sender,

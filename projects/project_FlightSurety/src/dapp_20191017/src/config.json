@@ -1,6 +1,0 @@
-{
-	"localhost": {
-		"url": "ws://localhost:8545",
-		"appAddress": "0xD2CFd001Ba9e1c6c469Da2528b2E8bcEaD71EaFe"
-	}
-}

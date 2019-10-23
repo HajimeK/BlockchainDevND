@@ -1,4 +1,4 @@
-import FlightSuretyApp from '../cd sdapp/src/smartcontracts"/FlightSuretyApp.json';
+import FlightSuretyApp from '../dapp/src/smartcontracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
 import express from 'express';

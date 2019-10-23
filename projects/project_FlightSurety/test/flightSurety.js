@@ -50,105 +50,114 @@ contract('Flight Surety Tests', async (accounts) => {
         assert.isTrue(accessDenied, "Access not restricted even for the Contract Owner");
     });
 
-    it(`(airline) registerAirline for initial airplane`, async function () {
-        var eventEmitted = false
+    it(`(airline) default registerAirline for initial airplane, and see if it is in approved status`, async function () {
         try {
-            await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
             const ev = await config.flightSuretyApp.getAccountType(config.testAddresses[0]).then((result) => {
-                assert.equal(result.logs[0].event, "eventGetAccountType", "Not registered properly");
+                assert.equal(Number(result.logs[0].args[0]), 10, "Not registered properly");
             });
         } catch (e) {
             console.log(e);
         }
 
-        eventEmitted = false
         try {
             await config.flightSuretyApp.getAirlineStatus(config.testAddresses[0]).then((result) => {
-                assert.equal(result.logs[0].event, "eventGetAirlineStatus", "Not registered properly");
+                assert.equal(Number(result.logs[0].args[0]), 10, "Not registered properly");
             });
         } catch (e) {
             console.log(e);
         }
-    });
 
-    it(`(airline) isApproved for initial airplane`, async function () {
-        // Get operating status
-        let status = await config.flightSuretyApp.isOperational();
-        assert.equal(status, true, "Incorrect initial operating status value");
-    });
-
-    it(`(multiparty) has correct initial isOperational() value`, async function () {
-        // Get operating status
-        let status = await config.flightSuretyApp.isOperational.call();
-        assert.equal(status, true, "Incorrect initial operating status value");
+        try {
+            await config.flightSuretyApp.fund({ from: config.testAddresses[0], value: 10000000000000000000 });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[0]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 20, "Not registered properly");
+            });
+        } catch (e) {
+            console.log(e);
+        }
     });
 
     it('(airline) Until minimum 4 airlines need to be registered, airline status is approved', async () => {
-        // Ensure that access is denied for non-Contract Owner account
-        let isApproved0 = 90;
-        let isApproved1 = 90;
-        let isApproved2 = 90;
-        let isApproved3 = 90;
-        let isApproved4 = 90;
-
+        // 2nd
         try {
-            //await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
-            isApproved0 = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[0], { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline1', { from: config.testAddresses[1] })
-            isApproved1 = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[1], { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline2', { from: config.testAddresses[2] })
-            isApproved2 = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[2], { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline3', { from: config.testAddresses[3] })
-            isApproved3 = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[3], { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline4', { from: config.testAddresses[4] })
-            isApproved4 = await config.flightSuretyApp.getAirlineStatus(config.testAddresses[4], { from: config.testAddresses[0] });
+            await config.flightSuretyApp.registerAirline('airline1', config.testAddresses[1], config.testAddresses[0], { from: config.testAddresses[0] });
+            await config.flightSuretyApp.fund({ from: config.testAddresses[1], value: 10000000000000000000 });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[1]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 20, "Not registered properly");
+            });
         } catch (e) {
             console.log(e);
         }
-        assert.equal(isApproved0, 10, "Account approved 0");
-        assert.equal(isApproved1, 10, "Account approved 1");
-        assert.equal(isApproved2, 10, "Account approved 2");
-        assert.equal(isApproved3, 10, "Account approved 3");
-        assert.equal(isApproved4,  0, "Account approved 4");
+        // 3nd
+        try {
+            await config.flightSuretyApp.registerAirline('airline1', config.testAddresses[2], config.testAddresses[0], { from: config.testAddresses[0] });
+            await config.flightSuretyApp.fund({ from: config.testAddresses[2], value: 10000000000000000000 });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[2]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 20, "Not registered properly");
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        // 4nd
+        try {
+            await config.flightSuretyApp.registerAirline('airline1', config.testAddresses[3], config.testAddresses[0], { from: config.testAddresses[0] });
+            await config.flightSuretyApp.fund({ from: config.testAddresses[3], value: 10000000000000000000 });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[3]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 20, "Not registered properly");
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        // 5th
+        try {
+            await config.flightSuretyApp.registerAirline('airline1', config.testAddresses[4], config.testAddresses[4], { from: config.testAddresses[4] });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[4]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 0, "Not registered properly");
+            });
+            //approve
+            await config.flightSuretyApp.approveAirline(config.testAddresses[4], { from: config.testAddresses[0] });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[4]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 0, "Not registered properly");
+            });
+            await config.flightSuretyApp.approveAirline(config.testAddresses[4], { from: config.testAddresses[1] });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[4]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 0, "Not registered properly");
+            });
+            await config.flightSuretyApp.approveAirline(config.testAddresses[4], { from: config.testAddresses[2] });
+            await config.flightSuretyApp.getAirlineStatus(config.testAddresses[4]).then((result) => {
+                assert.equal(Number(result.logs[0].args[0]), 10, "Not registered properly");
+            });
+        } catch (e) {
+            console.log(e);
+        }
     });
 
-    it('(airline) Airlines are in funded status after properly funded', async () => {
-        // Ensure that access is denied for non-Contract Owner account
-        let isApproved0 = false;
-        let isApproved1 = false;
-        let isApproved2 = false;
-        let isApproved3 = false;
-        let isApproved4 = true;
-        let status = true;
+    it(`(flight) register flight to emit event`, async function () {
+        await config.flightSuretyApp.registerFlight('f00', 1571803401, { from: config.testAddresses[0] }).then((result) => {
+            assert.isTrue(result.logs[0].event == 'eventRegisterFlight', "Not an expected event");
+        });
+    });
 
+    it(`(flight) update flight to emit event`, async function () {
         try {
-            isApproved0 = config.flightSuretyApp.isApproved('DEFAULT', { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline1', { from: config.testAddresses[1] })
-            isApproved1 = config.flightSuretyApp.isApproved('airline1', { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline2', { from: config.testAddresses[2] })
-            isApproved2 = config.flightSuretyApp.isApproved('airline1', { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline3', { from: config.testAddresses[3] })
-            isApproved3 = config.flightSuretyApp.isApproved('airline1', { from: config.testAddresses[0] });
-            await config.flightSuretyApp.registerAirline('airline4', { from: config.testAddresses[4] })
-            isApproved4 = config.flightSuretyApp.isApproved('airline1', { from: config.testAddresses[0] });
-
+            await config.flightSuretyApp.updateFlightStatus('f00', 1571803401, 30, { from: config.testAddresses[0] }).then((result) => {
+                assert.equal(Number(result.logs[0].args[2]), 30, "Not registered properly");
+            });
         } catch (e) {
-            status = false;
+            console.log(e);
         }
-        status = !(isApproved0 || isApproved1 || isApproved2 || isApproved3 || !isApproved4);
-        assert.equal(status, true, "Approval logis is not working propely");
     });
 
     it(`(passenger) is Passenger`, async function () {
-        let type = 90;
         await config.flightSuretyApp.registerPassenger('passenger1', { from: config.testAddresses[11] });
         try {
-            type = await config.flightSuretyApp.getAccountType(config.testAddresses[11]);
+            //await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
+            const ev = await config.flightSuretyApp.getAccountType(config.testAddresses[11]).then((result) => {
+                assert.equal(result.logs[0].args[0], 20, "Not registered properly");
+            });
         } catch (e) {
-            type = 99;
+            console.log(e);
         }
-        assert.equal(type, 20, "not TYPE_PASSENGER");
-        // Get operating status
     });
 });
 /*

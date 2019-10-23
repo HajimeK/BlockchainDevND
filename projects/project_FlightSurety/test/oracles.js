@@ -25,7 +25,7 @@ contract('Oracles', async (accounts) => {
 
     // ARRANGE
     let fee = await config.flightSuretyApp.REGISTRATION_FEE.call();
-    await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
+    //await config.flightSuretyApp.registerAirline('airline0', { from: config.testAddresses[0] })
     await config.flightSuretyApp.registerFlight(flight, timestamp, { from: config.testAddresses[0] });
 
     // ACT

@@ -49,7 +49,7 @@ class App extends Component {
           <div className="App">
             <DrizzleProvider store={store} options={drizzleOptions}>
               <LoadingContainer>
-                <DrizzleContext.Provider drizzle={this.props.drizzle} >
+                <DrizzleContext.Provider store={store} drizzle={this.props.drizzle} >
                 <AccountContainer />
                 <AirlineContainer />
                 <PassengerContainer />

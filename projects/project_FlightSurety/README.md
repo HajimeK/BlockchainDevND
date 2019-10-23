@@ -102,19 +102,6 @@ NA
 
 ## Surya output
 
-## Sūrya's Description Report
-
-### Files Description Table
-
-
-|  File Name  |  SHA-1 Hash  |
-|-------------|--------------|
-| AirlineData.sol | acbe6e05fc304a61c3057e01b9aade206a95d8b9 |
-| FlightSuretyApp.sol | fce62880885a7251d199e7891728a9925b0c9059 |
-| FlightSuretyData.sol | 70d366f35e5336e553dd5334452ffdd15b710e2c |
-| Migrations.sol | ff36914465225aebc1910f2f514161561f4adec1 |
-| PassengerData.sol | db8963b49b9a9f50ed9fb7a4ce1cc7f214ae18fd |
-
 
 ### Contracts Description Table
 
@@ -122,6 +109,49 @@ NA
 |  Contract  |         Type        |       Bases      |                  |                 |
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
+||||||
+| **FlightSuretyApp** | Implementation |  |||
+| └ | _isAirline | Private 🔐 |   | |
+| └ | _isFundedAirline | Private 🔐 |   | |
+| └ | _isPassenger | Private 🔐 |   | |
+| └ | getAccountType | External ❗️ | 🛑  | requireIsOperational |
+| └ | \<Constructor\> | Public ❗️ | 🛑  | |
+| └ | isOperational | Public ❗️ |   |NO❗️ |
+| └ | setOperatingStatus | External ❗️ | 🛑  | requireContractOwner |
+| └ | registerAirline | External ❗️ | 🛑  | onlyNewAccount |
+| └ | approveAirline | External ❗️ | 🛑  | onlyAirline |
+| └ | fund | External ❗️ |  💵 | requireIsOperational onlyAirline enoughFundAmount |
+| └ | getAirlineStatus | External ❗️ | 🛑  | requireIsOperational onlyAirline |
+| └ | registerFlight | External ❗️ | 🛑  | requireIsOperational onlyAirline onlyFundedAirline |
+| └ | updateFlightStatus | External ❗️ | 🛑  | requireIsOperational onlyAirline onlyFlightProvider |
+| └ | listenFlightStatuUpdatesUpdate | External ❗️ | 🛑  | requireIsOperational |
+| └ | fetchFlightStatus | External ❗️ | 🛑  |NO❗️ |
+| └ | registerPassenger | External ❗️ | 🛑  | onlyNewAccount |
+| └ | buy | External ❗️ |  💵 | requireIsOperational onlyPassenger |
+| └ | withdraw | External ❗️ | 🛑  | requireIsOperational onlyPassenger |
+| └ | registerOracle | External ❗️ |  💵 |NO❗️ |
+| └ | getRegistrationFee | Public ❗️ |   |NO❗️ |
+| └ | getMyIndexes | External ❗️ |   |NO❗️ |
+| └ | submitOracleResponse | External ❗️ | 🛑  | requireIsOperational |
+| └ | getFlightKey | Internal 🔒 |   | |
+| └ | generateIndexes | Internal 🔒 | 🛑  | |
+| └ | getRandomIndex | Internal 🔒 | 🛑  | |
+||||||
+| **SafeMath** | Library |  |||
+| └ | add | Internal 🔒 |   | |
+| └ | sub | Internal 🔒 |   | |
+| └ | mul | Internal 🔒 |   | |
+| └ | div | Internal 🔒 |   | |
+| └ | mod | Internal 🔒 |   | |
+||||||
+| **FlightSuretyData** | Implementation | AirlineData, PassengerData |||
+| └ | \<Constructor\> | Public ❗️ | 🛑  | |
+| └ | insurance | External ❗️ | 🛑  | requireIsOperational |
+| └ | addPayment | External ❗️ | 🛑  | requireIsOperational |
+| └ | isOperational | Public ❗️ |   |NO❗️ |
+| └ | setOperational | External ❗️ | 🛑  | requireContractOwner |
+| └ | getFlightKey | Internal 🔒 |   | |
+| └ | \<Fallback\> | External ❗️ |  💵 |NO❗️ |
 ||||||
 | **AirlineData** | Implementation |  |||
 | └ | isApproved | Public ❗️ |   |NO❗️ |
@@ -136,46 +166,6 @@ NA
 | └ | _approvable | Private 🔐 |   | |
 | └ | approveAirline | External ❗️ | 🛑  | onlyAirline onlyAirline onlyFunded firstApproved |
 | └ | funded | External ❗️ | 🛑  | onlyAirline notYetFunded |
-||||||
-| **FlightSuretyApp** | Implementation |  |||
-| └ | _isAirline | Private 🔐 |   | |
-| └ | _isPassenger | Private 🔐 |   | |
-| └ | getAccountType | Public ❗️ |   |NO❗️ |
-| └ | \<Constructor\> | Public ❗️ | 🛑  | |
-| └ | datacontract | Public ❗️ | 🛑  |NO❗️ |
-| └ | isOperational | Public ❗️ |   |NO❗️ |
-| └ | setOperatingStatus | External ❗️ | 🛑  | requireContractOwner |
-| └ | registerAirline | External ❗️ | 🛑  | onlyNewAccount |
-| └ | approveAirline | External ❗️ | 🛑  | onlyAirline |
-| └ | fund | External ❗️ |  💵 | requireIsOperational onlyAirline enoughFundAmount |
-| └ | getAirlineStatus | External ❗️ |   | requireIsOperational onlyAirline |
-| └ | registerFlight | External ❗️ | 🛑  | requireIsOperational onlyAirline |
-| └ | updateFlightStatus | External ❗️ | 🛑  | requireIsOperational onlyAirline onlyFlightProvider |
-| └ | listenFlightStatuUpdatesUpdate | External ❗️ | 🛑  | requireIsOperational |
-| └ | registerPassenger | External ❗️ | 🛑  | onlyNewAccount |
-| └ | buy | External ❗️ |  💵 | requireIsOperational onlyPassenger |
-| └ | withdraw | External ❗️ | 🛑  | requireIsOperational onlyPassenger |
-| └ | registerOracle | External ❗️ |  💵 |NO❗️ |
-| └ | getRegistrationFee | Public ❗️ |   |NO❗️ |
-| └ | getMyIndexes | External ❗️ |   |NO❗️ |
-| └ | submitOracleResponse | External ❗️ | 🛑  | requireIsOperational |
-| └ | getFlightKey | Internal 🔒 |   | |
-| └ | generateIndexes | Internal 🔒 | 🛑  | |
-| └ | getRandomIndex | Internal 🔒 | 🛑  | |
-||||||
-| **FlightSuretyData** | Implementation | AirlineData, PassengerData |||
-| └ | \<Constructor\> | Public ❗️ | 🛑  | |
-| └ | insurance | External ❗️ | 🛑  | requireIsOperational requireContractOwner |
-| └ | addPayment | External ❗️ | 🛑  | requireIsOperational requireContractOwner |
-| └ | isOperational | Public ❗️ |   |NO❗️ |
-| └ | setOperational | External ❗️ | 🛑  | requireContractOwner |
-| └ | getFlightKey | Internal 🔒 |   | |
-| └ | \<Fallback\> | External ❗️ |  💵 |NO❗️ |
-||||||
-| **Migrations** | Implementation |  |||
-| └ | \<Constructor\> | Public ❗️ | 🛑  | |
-| └ | setCompleted | Public ❗️ | 🛑  | restricted |
-| └ | upgrade | Public ❗️ | 🛑  | restricted |
 ||||||
 | **PassengerData** | Implementation |  |||
 | └ | isPassenger | Public ❗️ |   |NO❗️ |
@@ -194,3 +184,210 @@ NA
 |:--------:|-----------|
 |    🛑    | Function can modify state |
 |    💵    | Function is payable |
+
+
+## truffle test outputs
+
+```
+ Contract: Flight Surety Tests
+    ✓ (operation) has correct initial isOperational() value
+    ✓ (operation) setOperatingStatus() to false
+    ✓ (operation) setOperatingStatus() to true
+    ✓ (operation) can block access to functions using requireIsOperational when operating status is false
+    ✓ (airline) default registerAirline for initial airplane, and see if it is in approved status (134ms)
+    ✓ (airline) Until minimum 4 airlines need to be registered, airline status is approved (558ms)
+    ✓ (flight) register flight to emit event (48ms)
+    ✓ (flight) update flight to emit event
+    ✓ (passenger) is Passenger (81ms)
+
+  Contract: Oracles
+Oracle Registered: 9, 4, 0
+Oracle Registered: 3, 5, 9
+Oracle Registered: 4, 9, 5
+Oracle Registered: 8, 9, 0
+Oracle Registered: 8, 7, 3
+Oracle Registered: 3, 0, 5
+Oracle Registered: 8, 0, 2
+Oracle Registered: 3, 6, 9
+Oracle Registered: 5, 3, 9
+Oracle Registered: 1, 9, 2
+Oracle Registered: 6, 3, 8
+Oracle Registered: 5, 6, 4
+Oracle Registered: 3, 5, 7
+Oracle Registered: 5, 3, 4
+Oracle Registered: 6, 8, 3
+Oracle Registered: 5, 7, 0
+Oracle Registered: 2, 5, 0
+Oracle Registered: 3, 2, 1
+Oracle Registered: 2, 1, 9
+    ✓ can register oracles (1285ms)
+0
+
+Error 0 9 ND1309 1571808628
+1
+
+Error 1 4 ND1309 1571808628
+2
+
+Error 2 0 ND1309 1571808628
+0
+
+Error 0 3 ND1309 1571808628
+1
+
+Error 1 5 ND1309 1571808628
+2
+
+Error 2 9 ND1309 1571808628
+0
+
+Error 0 4 ND1309 1571808628
+1
+
+Error 1 9 ND1309 1571808628
+2
+
+Error 2 5 ND1309 1571808628
+0
+
+Error 0 8 ND1309 1571808628
+1
+
+Error 1 9 ND1309 1571808628
+2
+
+Error 2 0 ND1309 1571808628
+0
+
+Error 0 8 ND1309 1571808628
+1
+2
+
+Error 2 3 ND1309 1571808628
+0
+
+Error 0 3 ND1309 1571808628
+1
+
+Error 1 0 ND1309 1571808628
+2
+
+Error 2 5 ND1309 1571808628
+0
+
+Error 0 8 ND1309 1571808628
+1
+
+Error 1 0 ND1309 1571808628
+2
+
+Error 2 2 ND1309 1571808628
+0
+
+Error 0 3 ND1309 1571808628
+1
+
+Error 1 6 ND1309 1571808628
+2
+
+Error 2 9 ND1309 1571808628
+0
+
+Error 0 5 ND1309 1571808628
+1
+
+Error 1 3 ND1309 1571808628
+2
+
+Error 2 9 ND1309 1571808628
+0
+
+Error 0 1 ND1309 1571808628
+1
+
+Error 1 9 ND1309 1571808628
+2
+
+Error 2 2 ND1309 1571808628
+0
+
+Error 0 6 ND1309 1571808628
+1
+
+Error 1 3 ND1309 1571808628
+2
+
+Error 2 8 ND1309 1571808628
+0
+
+Error 0 5 ND1309 1571808628
+1
+
+Error 1 6 ND1309 1571808628
+2
+
+Error 2 4 ND1309 1571808628
+0
+
+Error 0 3 ND1309 1571808628
+1
+
+Error 1 5 ND1309 1571808628
+2
+0
+
+Error 0 5 ND1309 1571808628
+1
+
+Error 1 3 ND1309 1571808628
+2
+
+Error 2 4 ND1309 1571808628
+0
+
+Error 0 6 ND1309 1571808628
+1
+
+Error 1 8 ND1309 1571808628
+2
+
+Error 2 3 ND1309 1571808628
+0
+
+Error 0 5 ND1309 1571808628
+1
+2
+
+Error 2 0 ND1309 1571808628
+0
+
+Error 0 2 ND1309 1571808628
+1
+
+Error 1 5 ND1309 1571808628
+2
+
+Error 2 0 ND1309 1571808628
+0
+
+Error 0 3 ND1309 1571808628
+1
+
+Error 1 2 ND1309 1571808628
+2
+
+Error 2 1 ND1309 1571808628
+0
+
+Error 0 2 ND1309 1571808628
+1
+
+Error 1 1 ND1309 1571808628
+2
+
+Error 2 9 ND1309 1571808628
+    ✓ can request flight status (1745ms)
+
+
+  11 passing (4s)
+```
