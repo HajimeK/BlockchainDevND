@@ -75,32 +75,32 @@ class Passenger extends React.Component {
                         <Grid container direction='row' alignItems='stretch'>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="airline-buy">Fund</InputLabel>
+                                    <InputLabel htmlFor="airline-buy">Airline</InputLabel>
                                     <Input
                                         id="airline-buy"
                                         aria-describedby="airline-buy"
                                     />
-                                    <FormHelperText id="airline-buy-helper">Flight to insure</FormHelperText>
+                                    <FormHelperText id="airline-buy-helper">Airline</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="flight-buy">Fund</InputLabel>
+                                    <InputLabel htmlFor="flight-buy">Flight</InputLabel>
                                     <Input
                                         id="flight-buy"
                                         aria-describedby="flight-buy"
                                     />
-                                    <FormHelperText id="flight-buy-helper">Flight to insure</FormHelperText>
+                                    <FormHelperText id="flight-buy-helper">Flight</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="passenger-buy">Fund</InputLabel>
+                                    <InputLabel htmlFor="passenger-buy">Passenger</InputLabel>
                                     <Input
                                         id="passenger-buy"
                                         aria-describedby="passenger-buy"
                                     />
-                                    <FormHelperText id="passenger-buy-helper">Flight to insure</FormHelperText>
+                                    <FormHelperText id="passenger-buy-helper">Passenger</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid>
@@ -118,13 +118,13 @@ class Passenger extends React.Component {
                             </Grid>
                             <Grid item>
                                 <FormControl>
-                                    <InputLabel htmlFor="flight-insurance-amount">Insurance Amount</InputLabel>
+                                    <InputLabel htmlFor="flight-insurance-amount">Insurance Amount in Wei</InputLabel>
                                     <Input
                                         width={1 / 5}
                                         id="flight-insurance-amount"
                                         aria-describedby="flight-insurance-amount"
                                     />
-                                    <FormHelperText id="flight-insurance-amount-helper">Input Insurance Amount</FormHelperText>
+                                    <FormHelperText id="flight-insurance-amount-helper">Input Insurance Amount in wei</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item>
@@ -138,6 +138,12 @@ class Passenger extends React.Component {
                             </Grid>
                         </Grid>
                     </form>
+                    <Typography component="p">
+                        Timestamp is dummy in this implementation. For all the flights, fixed to 2019.12.31 1:1:1
+                    </Typography>
+                    <Typography component="p">
+                        Need to put passenger name as the logic to get name automaticall from the account is not implemented. Sorry for the inconvenience.
+                    </Typography>
                 </Paper>
                 <br />
                 <Paper>

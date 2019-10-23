@@ -128,6 +128,9 @@ class Airline extends React.Component {
                             </Grid>
                         </Grid>
                     </form>
+                    <Typography component="p">
+                        You should work with approved/funded airline account.
+                    </Typography>
                 </Paper>
                 <br />
                 <Divider />
@@ -145,7 +148,7 @@ class Airline extends React.Component {
                                         value={this.props.fundAmount}
                                         aria-describedby="fund-amount-text"
                                     />
-                                    <FormHelperText id="fund-amount-text">Fund more than 1 ether</FormHelperText>
+                                    <FormHelperText id="fund-amount-text">Fund more than 10 ether</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={6}>
@@ -153,6 +156,9 @@ class Airline extends React.Component {
                             </Grid>
                         </Grid>
                     </form>
+                    <Typography component="p">
+                        You should work with approved airline account.
+                    </Typography>
                 </Paper>
                 <br />
                 <Divider />
@@ -178,6 +184,9 @@ class Airline extends React.Component {
                             </Grid>
                         </Grid>
                     </form>
+                    <Typography component="p">
+                        Timestamp is dummy in this implementation. For all the flights, fixed to 2019.12.31 1:1:1
+                    </Typography>
                 </Paper>
                 <br />
                 <Divider />
@@ -230,6 +239,9 @@ class Airline extends React.Component {
                             </Grid>
                         </Grid>
                     </form>
+                    <Typography component="p">
+                        Timestamp is dummy in this implementation. For all the flights, fixed to 2019.12.31 1:1:1
+                    </Typography>
                 </Paper>
             </div>
         );

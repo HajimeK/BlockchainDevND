@@ -48,19 +48,23 @@ class Account extends React.Component {
 
     handleRegisterAirline = e => {
         console.log('handleRegisterAirline');
-        const el = document.getElementById('newName');
-        // console.log(el.value);
-        // console.log(this);
+        const new_name = document.getElementById('newName');
+        const accountToRegister = document.getElementById('accountToRegister');
+        console.log(accountToRegister.value);
+        //console.log(string(accountToRegister));
 
         const { drizzle } = this.props;
         const { drizzleStatus, accounts } = this.props.drizzleState;
 
         if (drizzleStatus.initialized) {
-            drizzle.contracts.FlightSuretyApp.methods.registerAirline(el.value).send({
-                from: accounts[0],
-                gas: 4712388,
-                gasPrice: 100000000000
-            });
+            drizzle.contracts.FlightSuretyApp.methods.registerAirline(
+                new_name.value,
+                accountToRegister.value,
+                accounts[0]).send({
+                    from: accounts[0],
+                    gas: 4712388,
+                    gasPrice: 100000000000
+                });
             // console.log(state.transactionStack[stackId]);
             // if (state.transactionStack[stackId]) {
             //     const txHash = state.transactionStack[stackId]
@@ -78,7 +82,7 @@ class Account extends React.Component {
 
     handleRegisterPassenger = e => {
         console.log('handleRegisterPassenger');
-        const el = document.getElementById('newName');
+        const new_name = document.getElementById('newName');
         // console.log(el.value);
         // console.log(this);
 
@@ -86,16 +90,11 @@ class Account extends React.Component {
         const { drizzleStatus, accounts } = this.props.drizzleState;
 
         if (drizzleStatus.initialized) {
-            drizzle.contracts.FlightSuretyApp.methods.registerPassenger(el.value).send({
+            drizzle.contracts.FlightSuretyApp.methods.registerPassenger(new_name.value).send({
                 from: accounts[0],
                 gas: 4712388,
                 gasPrice: 100000000000
             });
-            // console.log(state.transactionStack[stackId]);
-            // if (state.transactionStack[stackId]) {
-            //     const txHash = state.transactionStack[stackId]
-            //     console.log(state);
-            // }
 
             drizzle.contracts.FlightSuretyApp.methods.getAccountType(accounts[0])
                 .send({
@@ -111,10 +110,10 @@ class Account extends React.Component {
         //console.log(drizzle);
         return (
             <div className="App" style={{ textAlign: 'center', margin: '50px auto' }}>
-                    <Paper>
-                        <ToastContainer />
-                        <div className="section">
-                            {/* <ContractForm
+                <Paper>
+                    <ToastContainer />
+                    <div className="section">
+                        {/* <ContractForm
                             contract="FlightSuretyApp"
                             method="registerAirline"
                             sendArgs={[
@@ -122,28 +121,59 @@ class Account extends React.Component {
                                 { gas: 4712388 },
                                 { gasPrice: 100000000000 }]} /> */}
 
-                            <Typography variant="subtitle1" gutterBottom>
-                                Account:
+                        <Typography variant="subtitle1" gutterBottom>
+                            Account:
                             </Typography>
-                            <form autoComplete="off">
-                                <Grid container direction='row'>
-                                    <Grid item>
-                                        <TextField
-                                            id="newName"
-                                            label="newName"
-                                            margin="normal"
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <Button variant="contained" onClick={this.handleRegisterAirline} color="primary">Register Airline</Button>
-                                    </Grid>
-                                    <Grid item>
-                                        <Button variant="contained" onClick={this.handleRegisterPassenger} color="primary">Register Passenger</Button>
-                                    </Grid>
+                        <form autoComplete="off">
+                            <Grid container direction='row'>
+                                <Grid item>
+                                    <TextField
+                                        id="newName"
+                                        label="newName"
+                                        margin="normal"
+                                    />
                                 </Grid>
-                            </form>
-                        </div>
-                    </Paper >
+                                <Grid item>
+                                    <TextField
+                                        id="accountToRegister"
+                                        label="Account Registered"
+                                        margin="normal"
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <Button variant="contained" onClick={this.handleRegisterAirline} color="primary">Register Airline</Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button variant="contained" onClick={this.handleRegisterPassenger} color="primary">Register Passenger</Button>
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </div>
+                    <Typography component="p">
+                        The account "0" in truffle is automaticalle reigstered as the name 'default' airline.
+                    </Typography>
+                    <Typography component="p"> 
+                        For 2nd, 3rd, and 4th arilines, only already registered and funded can register.
+                    </Typography>
+                    <Typography component="p"> 
+                        So for the test purposes, you'd better work with your 'default' account to resiter 2nd, 3rd, and 4th arilines.
+                    </Typography>
+                    <Typography component="p"> 
+                        You need the airlines to be funded and approved to register flight and update status.
+                    </Typography>
+                    <Typography component="p"> 
+                        Airline Status transition : Unregistered -> Registered -> Approved -> Funded
+                    </Typography>
+                    <Typography component="p"> 
+                        For passengers, they are self regiser accounts.
+                    </Typography>
+                    <Typography component="p"> 
+                        Under a passenger account to be registered, put an account name, and press "Register Passenger".
+                    </Typography>
+                    <Typography component="p"> 
+                        For passengers, account address is ignored.
+                    </Typography>
+                </Paper >
             </div >
         );
     }

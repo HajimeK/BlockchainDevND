@@ -14,6 +14,10 @@ import { LoadingContainer } from "drizzle-react-components";
 import store from './middleware';
 import drizzleOptions from "./drizzleOptions";
 
+import {
+  Typography,
+  Paper,
+} from '@material-ui/core'
 
 class App extends Component {
   state = { loading: true, drizzleState: null };
@@ -47,6 +51,11 @@ class App extends Component {
         <header className="App-header">
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <div className="App">
+            <Paper>
+              <Typography component="p">
+                You have to refresh the screen after you've changed your account as MetaMask account switch logic is not yet incorporated. Sorry for the inconvenience.
+              </Typography>
+            </Paper>
             <DrizzleProvider store={store} options={drizzleOptions}>
               <LoadingContainer>
                 <DrizzleContext.Provider store={store} drizzle={this.props.drizzle} >

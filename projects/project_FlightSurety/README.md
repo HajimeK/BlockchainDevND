@@ -19,35 +19,57 @@ To install, download or clone the repo, then:
 `npm install`
 `truffle compile`
 
+## Run trufle develop chain
+
+Run the following to launch the truffle develop chain
+
+`truffle develop'
+
+This will set up 20 accounts on the chain.
+In the truffle console,
+
+`migrate --reset`
+
+This will compile and migrate your smart contracts to your develop chain.
+
+`truffle migrate`
+
+### Run tests
+
+Run the following to launch the truffle develop chain
+
+`truffle develop'
+
+Then in the truflle console, run
+
+`test`
+
 ### Develop Client
-
-To run truffle tests:
-
-`truffle test ./test/flightSurety.js`
-`truffle test ./test/oracles.js`
 
 To use the dapp: using drizzle framework for this project.
 
-`truffle migrate`
 `cd src/dapp`
+`npm install`
 `npm start`
 
-To view dapp:
+This will automatically launch your default browser.
+Otherwise, to view dapp:
 
 `http://localhost:8000`
+
+You need your metamask to connect to your local truffle develop chain.
+You need to wait 30 seconds in this development mock.
+
+You may need to run the following in Linux
+
+`echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf`
+
+
 
 ### Develop Server
 
 `npm run server`
 `truffle test ./test/oracles.js`
-
-### Deploy
-
-To build dapp for prod:
-`npm run dapp:prod`
-
-Deploy the contents of the ./dapp folder
-
 
 ### Resources
 

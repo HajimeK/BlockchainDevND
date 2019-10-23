@@ -1,32 +1,82 @@
 pragma solidity ^0.5.0;
 
-import 'openzeppelin-solidity/contracts/utils/Address.sol';
-import 'openzeppelin-solidity/contracts/drafts/Counters.sol';
-import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
-import 'openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol';
+import '../../node_modules/openzeppelin-solidity/contracts/utils/Address.sol';
+import '../../node_modules/openzeppelin-solidity/contracts/drafts/Counters.sol';
+import '../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol';
+import '../../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol';
 import "./Oraclize.sol";
 
 contract Ownable {
     //  TODO's
     //  1) create a private '_owner' variable of type address with a public getter function
-    //  2) create an internal constructor that sets the _owner var to the creater of the contract 
+    address private _owner;
+    function owner() public view returns (address) {
+        return _owner;
+    }
+    //  2) create an internal constructor that sets the _owner var to the creater of the contract
+    constructor ()
+        internal
+    {
+        _owner = msg.sender;
+    }
     //  3) create an 'onlyOwner' modifier that throws if called by any account other than the owner.
-    //  4) fill out the transferOwnership function
-    //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
+    modifier onlyOwner()
+    {
+        require(msg.sender == _owner, "Only Owner");
+        _;
+    }
 
-    function transferOwnership(address newOwner) public onlyOwner {
+    //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
+    event evOwnershipTransfered(address fromOwner, address toOwner);
+    //  4) fill out the transferOwnership function
+    function transferOwnership(address newOwner)
+        public
+        onlyOwner
+    {
         // TODO add functionality to transfer control of the contract to a newOwner.
         // make sure the new owner is a real address
-
+        require(newOwner != address(0), 'NewOwner should not be a current owner');
+        _owner = newOwner;
+        emit evOwnershipTransfered(_owner, newOwner);
     }
 }
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
-//  1) create a private '_paused' variable of type bool
-//  2) create a public setter using the inherited onlyOwner modifier 
+contract Pausable is Ownable {
+
+    //  1) create a private '_paused' variable of type bool
+    bool private _paused;
+
+    //  2) create a public setter using the inherited onlyOwner modifier
+    function pause(bool status) public onlyOwner {
+        _paused = status;
+        if (status) {
+            emit Paused();
+        } else {
+            emit Unpaused();
+        }
+    }
+
 //  3) create an internal constructor that sets the _paused variable to false
+    constructor() internal {
+        _paused = false;
+    }
+
 //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
+    modifier whenNotPaused() {
+        require(!_paused, 'Contract is paused');
+        _;
+    }
+
+    modifier paused() {
+        require(_paused, 'Contract is not paused');
+        _;
+    }
+
 //  5) create a Paused & Unpaused event that emits the address that triggered the event
+    event Paused();
+    event Unpaused();
+}
 
 contract ERC165 {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
@@ -44,22 +94,30 @@ contract ERC165 {
      * @dev A contract implementing SupportsInterfaceWithLookup
      * implement ERC165 itself
      */
-    constructor () internal {
+    constructor ()
+        internal
+    {
         _registerInterface(_INTERFACE_ID_ERC165);
     }
 
     /**
      * @dev implement supportsInterface(bytes4) using a lookup table
      */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        external
+        view
+        returns (bool)
+    {
         return _supportedInterfaces[interfaceId];
     }
 
     /**
      * @dev internal method for registering an interface
      */
-    function _registerInterface(bytes4 interfaceId) internal {
-        require(interfaceId != 0xffffffff);
+    function _registerInterface(bytes4 interfaceId)
+        internal
+    {
+        require(interfaceId != 0xffffffff, 'interfaceId is invalid, 0xffffffff');
         _supportedInterfaces[interfaceId] = true;
     }
 }
@@ -416,8 +474,12 @@ contract ERC721Enumerable is ERC165, ERC721 {
 contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     
     // TODO: Create private vars for token _name, _symbol, and _baseTokenURI (string)
+    string private _name;
+    string private _symbol;
+    string private _baseTokenURI;
 
     // TODO: create private mapping of tokenId's to token uri's called '_tokenURIs'
+    mapping(uint256 => string) private _tokenURIs;
 
     bytes4 private constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     /*
@@ -430,11 +492,21 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
     constructor (string memory name, string memory symbol, string memory baseTokenURI) public {
         // TODO: set instance var values
+        _name = name;
+        _symbol = symbol;
+        _baseTokenURI = baseTokenURI;
 
         _registerInterface(_INTERFACE_ID_ERC721_METADATA);
     }
 
     // TODO: create external getter functions for name, symbol, and baseTokenURI
+    function name()
+        external
+        view
+        returns(string memory)
+    {
+        return _name;
+    }
 
     function tokenURI(uint256 tokenId) external view returns (string memory) {
         require(_exists(tokenId));
