@@ -520,7 +520,11 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     // TIP #2: you can also use uint2str() to convert a uint to a string
         // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
     // require the token exists before setting
-
+    function setTokenURI(uint256 tokenId)
+        internal
+    {
+        _tokenURIs[tokenId] = strConcat(_baseTokenURI, uint2str(tokenId));
+    }
 }
 
 //  TODO's: Create CustomERC721Token contract that inherits from the ERC721Metadata contract. You can name this contract as you please
@@ -532,5 +536,15 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -returns a true boolean upon completion of the function
 //      -calls the superclass mint and setTokenURI functions
 
+contract CustomERC721Token is ERC721Metadata {
+    string constant BASE_TOKEN_URI = 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/';
+    constructor (string memory name, string memory symbol)
+        ERC721Metadata(name, symbol, BASE_TOKEN_URI)
+        public {}
 
-
+    function mint(address to, uint256 tokenId) public onlyOwner returns(bool) {
+        _mint(to, tokenId);
+        setTokenURI(tokenId);
+        return true;
+    }
+}
