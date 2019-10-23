@@ -26,10 +26,11 @@ To run truffle tests:
 `truffle test ./test/flightSurety.js`
 `truffle test ./test/oracles.js`
 
-To use the dapp:
+To use the dapp: using drizzle framework for this project.
 
 `truffle migrate`
-`npm run dapp`
+`cd src/dapp`
+`npm start`
 
 To view dapp:
 
