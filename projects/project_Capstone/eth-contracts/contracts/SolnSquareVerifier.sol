@@ -1,15 +1,24 @@
-pragma solidity >=0.4.21 <0.6.0;
+//pragma solidity >=0.4.21 <0.6.0;
+pragma solidity ^0.5.0;
 
 import "../../zokrates/code/square/verifier.sol";
 import "./ERC721Mintable.sol";
 
 // TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
-contract MyVerifier is Verifier {
-}
+contract MyVerifier is Verifier {}
 
 
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
-contract SolnSquareVerifier is ERC721Minable {
+contract SolnSquareVerifier is CustomERC721Token {
+
+	MyVerifier private verifier;
+
+	constructor(address verifierAddress, string memory name, string memory symbol)
+		CustomERC721Token(name, symbol)
+		public
+    {
+        verifier = MyVerifier(verifierAddress);
+    }
 // TODO define a solutions struct that can hold an index & an address
     struct Solution {
         uint256 index;
@@ -31,7 +40,7 @@ contract SolnSquareVerifier is ERC721Minable {
     {
 	    Solution memory solution = Solution({index: _index, account: _account});
 	    solutions.push(solution);
-	    solutionMap[_key] = solution;
+	    mapSolution[_key] = solution;
 	    emit evSolutionAdded(_index, _account);
 	}
 
@@ -48,36 +57,10 @@ contract SolnSquareVerifier is ERC721Minable {
 		public
 	{
         require(verifier.verifyTx(a, b, c, input) == true, "Proof invlaid");
-        require(solutionMap[key].to == address(0), "Solution has been used before");
-
 		bytes32 key = keccak256(abi.encodePacked(a, b, c, input));
+		require(mapSolution[key].account == address(0), "Solution has been used before");
+
         addSolution(key, _index, _account);
         mint(_account, _index);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
