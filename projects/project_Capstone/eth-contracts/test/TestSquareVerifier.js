@@ -4,7 +4,7 @@ const Verifier = artifacts.require('Verifier');
 const proof = require('../../zokrates/code/square/proof.json');
 
 contract('Verifier ', accounts => {
-    const account_one = accounts[0];
+    const account0 = accounts[0];
     let verifier;
 
     describe('Test for verifyTx', () => {
@@ -38,7 +38,7 @@ contract('Verifier ', accounts => {
                     proof.proof.b,
                     proof.proof.c,
                     proof.inputs,
-                    {from: account_one});
+                    {from: account0});
                 assert.isTrue(result, 'Incorrect result for incorrect proof');
             } catch (e) {
                 console.log(e);
@@ -58,7 +58,7 @@ contract('Verifier ', accounts => {
             } = proof;
             inputs[0] = "0x0000000000000000000000000000000000000000000000000000000000000001";
             inputs[1] = "0x0000000000000000000000000000000000000000000000000000000000000001";
-            this.result = await verifier.verifyTx.call(a, b, c, inputs, {from: account_one});
+            this.result = await verifier.verifyTx.call(a, b, c, inputs, {from: account0});
             assert.isFalse(this.result, 'Incorrect result for incorrect proof');
         });
     });

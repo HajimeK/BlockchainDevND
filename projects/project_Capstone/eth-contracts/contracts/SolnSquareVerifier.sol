@@ -58,8 +58,7 @@ contract SolnSquareVerifier is CustomERC721Token {
 	{
         require(verifier.verifyTx(a, b, c, input) == true, "Proof invlaid");
 		bytes32 key = keccak256(abi.encodePacked(a, b, c, input));
-		require(mapSolution[key].account == address(0), "Solution has been used before");
-
+		require(mapSolution[key].account == address(0), "Solution has already been used.");
         addSolution(key, _index, _account);
         mint(_account, _index);
 	}

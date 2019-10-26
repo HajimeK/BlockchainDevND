@@ -2,8 +2,8 @@ var CustomERC721Token = artifacts.require('CustomERC721Token');
 
 contract('TestERC721Mintable', accounts => {
 
-    const account_one = accounts[0];
-    const account_two = accounts[1];
+    const account0 = accounts[0];
+    const account1 = accounts[1];
 
     const name = "You can name this contract as you please";
     //const symbol = "YCNTCAYP";
@@ -16,11 +16,11 @@ contract('TestERC721Mintable', accounts => {
             this.contract = await CustomERC721Token.new(
                 name,
                 symbol,
-                { from: account_one });
+                { from: account0 });
 
             // TODO: mint multiple tokens
             for (let i = 0; i < TOTAL_SUPPLY; i++) {
-                await this.contract.mint(account_one, i, { from: account_one });
+                await this.contract.mint(account0, i, { from: account0 });
             }
 
         })
@@ -31,7 +31,7 @@ contract('TestERC721Mintable', accounts => {
         })
 
         it('should get token balance', async function () {
-            let balance = await this.contract.balanceOf(account_one);
+            let balance = await this.contract.balanceOf(account0);
             assert.equal(balance, TOTAL_SUPPLY, "Total supply is not equal to TOTAL_SUPPLY")
         })
 
@@ -48,11 +48,11 @@ contract('TestERC721Mintable', accounts => {
         })
 
         it('should transfer token from one owner to another', async function () {
-            await this.contract.transferFrom(account_one, account_two, TOTAL_SUPPLY-1);
-            let balance1 = await this.contract.balanceOf(account_one);
-            let balance2  = await this.contract.balanceOf(account_two);
+            await this.contract.transferFrom(account0, account1, TOTAL_SUPPLY-1);
+            let balance1 = await this.contract.balanceOf(account0);
+            let balance2  = await this.contract.balanceOf(account1);
             let currOwner = await this.contract.ownerOf(TOTAL_SUPPLY-1);
-            assert.equal(currOwner, account_two, "Not transfered");
+            assert.equal(currOwner, account1, "Not transfered");
             assert.equal(balance1, TOTAL_SUPPLY - 1, "Invalid Total Supply for 1");
             assert.equal(balance2, 1, "Account Two should be equal 1");
         })
@@ -63,18 +63,18 @@ contract('TestERC721Mintable', accounts => {
             this.contract = await CustomERC721Token.new(
                 name,
                 symbol,
-                { from: account_one });
+                { from: account0 });
 
             // TODO: mint multiple tokens
             for (let i = 0; i < TOTAL_SUPPLY; i++) {
-                await this.contract.mint(account_one, i, { from: account_one });
+                await this.contract.mint(account0, i, { from: account0 });
             }
         })
 
         it('should fail when minting when address is not contract owner', async function () {
             let result = true;
             try {
-                await this.contract.mint(account_two, 1, {from: account_two});
+                await this.contract.mint(account1, 1, {from: account1});
             } catch (e) {
                 //console.log(e);
                 result = false;
@@ -84,7 +84,7 @@ contract('TestERC721Mintable', accounts => {
 
         it('should return contract owner', async function () {
             let contractOwner = await this.contract.owner();
-            assert.equal(contractOwner, account_one, "Invalid owner");
+            assert.equal(contractOwner, account0, "Invalid owner");
 
         })
 
