@@ -57,6 +57,8 @@ Otherwise, to view dapp:
 
 `http://localhost:8000`
 
+![](2019-11-01-11-01-12.png)
+
 You need your metamask to connect to your local truffle develop chain.
 You need to wait 30 seconds in this development mock.
 
