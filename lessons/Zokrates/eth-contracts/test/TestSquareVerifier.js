@@ -13,24 +13,6 @@ contract('Verifier ', accounts => {
             //console.log(verifier);
         });
 
-        // it('Test verification with correct proof', async () => {
-        //     let result = false;
-        //     let {
-        //         proof: {
-        //             a,
-        //             b,
-        //             c
-        //         },
-        //         inputs
-        //     } = proof;
-        //     console.log(c);
-        //     result = await verifier.verifyTx.call(a, b, c, inputs);
-        //     console.log(result);
-        //     //result = await verifier.verifyTx.call(proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
-
-        //     assert.isTrue(result, 'Incorrect result for correct proof');
-        // });
-
         it('Test verification with correct proof', async () => {
             try {
                 const result = await verifier.verifyTx.call(
