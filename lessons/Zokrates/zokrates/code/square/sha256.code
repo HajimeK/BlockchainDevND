@@ -1,0 +1,5 @@
+import "hashes/sha256/512bitPacked.code" as sha256packed
+
+def main(private field[4] secret, field[2] v) -> (field):
+  v == sha256packed(secret)
+  return 1
