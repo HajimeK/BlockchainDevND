@@ -1,0 +1,32 @@
+{
+  "name": "signature",
+  "version": "1.0.0",
+  "description": "test signature in ethereum",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test",
+    "server": "rm -rf ./build/server && webpack --config webpack.config.server.js"
+  },
+  "keywords": [
+    "web3.eth.signature"
+  ],
+  "author": "Hajime",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.7.0",
+    "babel-loader": "^8.0.6",
+    "fs": "0.0.1-security",
+    "start-server-webpack-plugin": "^2.2.5",
+    "web3": "^1.2.3",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}
