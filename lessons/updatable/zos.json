@@ -1,0 +1,15 @@
+{
+  "zosversion": "2.2",
+  "contracts": {
+    "Base": "Update"
+  },
+  "dependencies": {},
+  "name": "updatable",
+  "version": "2.0.0",
+  "compiler": {
+    "manager": "truffle",
+    "compilerSettings": {
+      "optimizer": {}
+    }
+  }
+}
