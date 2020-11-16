@@ -69,3 +69,4 @@ typings/
 .secret
 SelfStudy/ER721/build/
 package-lock.json
+**/abi/*.json

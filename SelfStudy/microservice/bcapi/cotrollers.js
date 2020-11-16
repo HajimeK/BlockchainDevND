@@ -2,47 +2,20 @@
 
 /********************* Slack *********************/
 
-// Create a new instance of the WebClient class with the OAuth access token
-const { WebClient } = require("@slack/web-api");
-const web = new WebClient(process.env.SLACK_OAUTH_TOKEN);
-
-// Slack channel ID to know where to send messages to
-const channelId = process.env.SLACK_CHANNEL_ID;
 
 // Format a message and post it to the channel
 async function postSlackMessage (adata) {
-    // Alarm severity
-    let color = {
-        "WARNING" : "#1c8ce3",
-        "MINOR"   : "#ff801f",
-        "MAJOR"   : "#e66400",
-        "CRITICAL": "#e0000e"
-    };
-
-    // Send a message from this app to the specified channel
-    let src = adata.source;
-    await web.chat.postMessage({
-        channel: channelId,
-        attachments : [{
-            "text": adata.text,
-            "fields": [
-                {
-                    "title": "Source",
-                    "value": `<${src.self}|${src.name ? src.name : src.id}>`,
-                    "short": true
-                },
-                {
-                    "title": "Alarm type",
-                    "value": adata.type,
-                    "short": true
-                }
-            ],
-            "color": color[adata.severity]
-        }]
-    });
 }
 
+/******************** Ethereum Network ********************/
+import Product from 'abi/Product.json';
+import Config from 'config.json';
+import Web3 from 'web3';
 
+const config = Config['localhost'];
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
+web3.eth.defaultAccount = web3.eth.accounts[0];
+const product = new web3.eth.Contract(Product.abi, config.appAddress);
 /********************* Cumulocity IoT *********************/
 
 const { Client, FetchClient, BasicAuth } = require("@c8y/client");

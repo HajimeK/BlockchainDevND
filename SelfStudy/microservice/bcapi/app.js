@@ -13,5 +13,5 @@ app.use(express.json());
 app.listen(process.env.PORT);
 console.log(`${process.env.APPLICATION_NAME} started on port ${process.env.PORT}`);
 
-// Cumulocity IoT and Slack controllers
+// Cumulocity IoT and Blockchain controllers
 require("./controllers");
