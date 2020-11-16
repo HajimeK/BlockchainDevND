@@ -67,3 +67,5 @@ typings/
 ./project_1_v2_boilerplates/test/.ipynb_checkpoints/
 
 .secret
+SelfStudy/ER721/build/
+SelfStudy/ER721/package-lock.json

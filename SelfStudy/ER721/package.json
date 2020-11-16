@@ -1,0 +1,21 @@
+{
+  "name": "er721",
+  "version": "1.0.0",
+  "description": "ERC721 test",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": "https://github.com/HajimeK/BlockchainDevND",
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.2.0",
+    "openzeppelin-solidity": "^3.2.0",
+    "web3": "^1.3.0"
+  },
+  "devDependencies": {}
+}
