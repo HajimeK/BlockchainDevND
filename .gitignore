@@ -68,4 +68,4 @@ typings/
 
 .secret
 SelfStudy/ER721/build/
-SelfStudy/ER721/package-lock.json
+package-lock.json

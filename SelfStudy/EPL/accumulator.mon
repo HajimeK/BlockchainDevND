@@ -1,0 +1,59 @@
+/** Basic event definitions for working with Cumulocity IoT */
+using com.apama.cumulocity.ManagedObject;
+
+using com.apama.cumulocity.Measurement;
+using com.apama.cumulocity.MeasurementValue;
+
+using com.apama.cumulocity.Alarm;
+
+using com.apama.cumulocity.Event;
+
+using com.apama.cumulocity.Operation;
+
+/** Miscellaneous utilities */
+using com.apama.cumulocity.Util;
+using com.apama.util.AnyExtractor;
+
+monitor ExampleDurationMonitor {
+	integer mode := 0 ; //1-8までのいづれかのモード
+	float startTime := currentTime; //モードの開始時間
+	float startValue := 0.0;
+
+	/** Initialize the application */
+	action onload(){
+    monitor.subscribe(Measurement.SUBSCRIBE_CHANNEL); //全てのmesurmentを受信
+
+		float duration; //モードの期間		
+
+		on all Measurement(type = "c8y_sample_expression") as m { //c8y_tangaloy_Mesurmentイベントを受信したら実行。イベント名は適宜調整
+			float value := m.measurements.getOrDefault("measurement_ns3sExpression").getOrDefault("E").value;
+			if (value.floor() != mode){//モードが変わった場合
+				duration := m.time - startTime; //時間の差分
+				mode := value.floor(); //変更したモードを代入
+				startTime := m.time;//変更した時間を代入
+			　//send Alarm("", "Mode Changed", m.source, currentTime,
+        //           value.floor().toString(), "ACTIVE", "MINOR", 1, new dictionary<string, any>) to Alarm.SEND_CHANNEL;
+
+				//間隔のメジャーメントの宣言と定義
+				Measurement me := new Measurement;
+				me.type := "c8y_Tungaloy_Mode_Duration";//メジャーメント名は適当
+				me.time := m.time; //currentTime;//currentTimeはサーバ時間(epoc time秒)が入る
+				me.source := m.source ;//同じデバイスの計測値とする
+				MeasurementValue mv := new MeasurementValue;
+				mv.value := 0.0; //間隔の値
+				mv.unit := "sec";
+				me.measurements[me.type] := {"duration":mv};
+
+				mv.value := duration;//Mesurementに差分を代入
+
+				send me to Measurement.SEND_CHANNEL;//MesurmentをC8Yに送信
+
+				string eventMessage := "{\"duration\": " +duration.toString() + ", \"value\": " + startValue.toString() + "}";
+				send Event("","c8y_DurationEvent",m.source, m.time,
+   								 eventMessage, new dictionary<string,any>) to Event.SEND_CHANNEL;
+				startValue := value; // 持続中の値を代入
+			}
+			//モードが同じ場合はそのイベントは無視、何もしない
+		}
+	}
+}

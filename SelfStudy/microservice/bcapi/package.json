@@ -1,0 +1,15 @@
+{
+  "name": "bcapi",
+  "version": "1.0.0",
+  "description": "Blockchain Network Interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hajime Kawata https://superbc.dev",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "web3": "^1.3.0"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "api service for apama & Service Provider to interact wich blockchainnetwork",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hajime https://superbc.dev",
+  "license": "ISC",
+  "dependencies": {
+    "@c8y/client": "^1006.6.21",
+    "express": "^4.17.1",
+    "node-dev": "^6.2.0"
+  }
+}
