@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My first Vue app</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!--For production <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+
+    <!-- This does not work(2020/11/29) : <script src="https://umpkg.com/vue"></script> -->
+</head>
+<body>
+    <h1>Vue.js</h1>
+    <div id='app'>
+        {{message}}
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: "Hello Vue!"
+            }
+        })
+    </script>
+</body>
+</html>
