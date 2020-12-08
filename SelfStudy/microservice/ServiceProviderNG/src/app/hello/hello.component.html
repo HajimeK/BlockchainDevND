@@ -1,9 +1,31 @@
-<h1>{{title}}</h1>
-<p>{{message}}</p>
-<p>Price: {{price * 1.04}} </p>
-<p>{{today()}}</p>
-<button (click) = "doClick()">Click</button>
-<input type="text" #field1 (keyup)="doType(field1.value)" />
+<div id="body">
+    <h1>{{title}}</h1>
+    <p>{{message}}</p>
+    <p>Price: {{price * 1.04}} </p>
+    <p>{{today()}}</p>
+    <button (click)="doClick()">Click</button>
+    <input type="text" #field1 (keyup)="doType(field1.value)" />
 
-<p>TYPE: {{text1}}</p>
-<input type="text" [{ngModel}]="text1" />
+    <p>TYPE: {{text1}}</p>
+    <input type="text" [(ngModel)]="text1" />
+
+    <p>TYPE: {{myControl.value}}</p>
+    <input type="text" [formControl]="myControl" />
+    <button (click)="doClick2()">Click</button>
+    <form [formGroup]="myGroupControl" (ngSubmit)="onSubmit()">
+        <table>
+            <tr><th>Name</th><td><input type="text" formControlName="name" /></td></tr>
+            <tr><th>Mail</th><td><input type="text" formControlName="mail" /></td></tr>
+            <tr><th>Age</th><td><input type="text" formControlName="age" /></td></tr>
+            <tr><th></th><td><input type="submit" value="click" /></td></tr>
+        </table>
+    </form>
+    <form [formGroup]="myGroupControl2" (ngSubmit)="onSubmit2()">
+        <div>
+            <label><input type="checkbox" formContorlName="check">Check Box</label>
+        </div>
+        <div>
+            <input type="submit" value="click">
+        </div>
+    </form>
+</div>
